@@ -5,6 +5,7 @@
     import type { PageData } from './$types';
     import type { PasteCreateResponse, PastePatch } from '$lib/types';
     import { encrypt, encryptWithPassword } from '$lib/crypto';
+    import { INSTANCE_NAME } from '../../../lib/publicEnv';
 
     export let data: PageData;
     let { isOwner, content, encrypted, passwordProtected, initVector } = data;
@@ -146,7 +147,7 @@
 <div class="p-2 min-h-screen w-screen flex flex-col text-primary">
     <div class="pb-4">
         <div class="flex flex-row items-center gap-4">
-            <h1 class="mr-auto text-2xl"><a href="/">YABin</a></h1>
+            <h1 class="mr-auto text-2xl"><a href="/">{INSTANCE_NAME}</a></h1>
 
             <button
                 class="underline underline-offset-4 px-2 py-1"

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { languageKeysByName } from '$lib/data';
+    import { INSTANCE_NAME } from '$lib/publicEnv';
     import type {
         Paste,
         PasteConfig,
@@ -179,7 +180,7 @@
 </script>
 
 <div class="sm:hidden flex flex-row gap-2 items-center px-4 py-2">
-    <h1 class="text-4xl mr-auto"><a href="/">YABin</a></h1>
+    <h1 class="text-4xl mr-auto"><a href="/">{INSTANCE_NAME}</a></h1>
 
     <button class="bg-amber-500 text-black text-lg px-4 py-1" on:click={save}
         >Save</button
@@ -189,7 +190,9 @@
 </div>
 
 <div class="h-screen grid grid-cols-12 text-primary">
-    <div class="p-2 col-span-12 sm:col-span-8 lg:col-span-10 flex flex-col relative">
+    <div
+        class="p-2 col-span-12 sm:col-span-8 lg:col-span-10 flex flex-col relative"
+    >
         <textarea
             class="px-2 grow border-none outline-none bg-transparent resize-none"
             spellcheck="false"
@@ -218,8 +221,12 @@
         class:expanded={sidebarOpen}
         id="sidebar"
     >
-        <div class="xl:py-4 px-2 md:mt-4 flex flex-col items-center gap-2 2xl:gap-4">
-            <h1 class="text-4xl mb-5 max-sm:hidden"><a href="/">YABin</a></h1>
+        <div
+            class="xl:py-4 px-2 md:mt-4 flex flex-col items-center gap-2 2xl:gap-4"
+        >
+            <h1 class="text-4xl mb-5 max-sm:hidden">
+                <a href="/">{INSTANCE_NAME}</a>
+            </h1>
 
             {#if env.PUBLIC_ANONYMOUS_PASTES_ENABLED === 'false' && !data.loggedIn}
                 <button
@@ -369,14 +376,14 @@
 
             <a
                 class="underline underline-offset-4 px-2 py-1"
-                href="https://github.com/Yureien/YABin"
+                href="https://github.com/iidgg/YABinPP"
             >
                 Source Code
             </a>
 
             <a
                 class="underline underline-offset-4 px-2 py-1"
-                href="https://github.com/Yureien/YABin/tree/main/cli"
+                href="https://github.com/iidgg/YABinPP/tree/main/cli"
             >
                 CLI Client
             </a>
@@ -384,18 +391,21 @@
             <div class="flex flex-row gap-4 justify-center">
                 <a
                     class="github-button"
-                    href="https://github.com/sponsors/Yureien"
+                    href="https://github.com/iidgg/YABinPP"
                     data-color-scheme="no-preference: dark; light: light; dark: dark;"
-                    data-size="large"
-                    aria-label="Sponsor @Yureien on GitHub">Sponsor</a
-                >
-                <a
-                    class="github-button"
-                    href="https://github.com/Yureien/YABin"
-                    data-color-scheme="no-preference: dark; light: light; dark: dark;"
+                    data-icon="octicon-star"
                     data-size="large"
                     data-show-count="true"
-                    aria-label="Star Yureien/YABin on GitHub">Star</a
+                    aria-label="Star iidgg/YABinPP on GitHub">Star</a
+                >
+
+                <a
+                    class="github-button"
+                    href="https://github.com/iidgg/YABinPP/issues"
+                    data-color-scheme="no-preference: dark; light: light; dark: dark;"
+                    data-icon="octicon-issue-opened"
+                    data-size="large"
+                    aria-label="Issue iidgg/YABinPP on GitHub">Issue</a
                 >
             </div>
         </div>

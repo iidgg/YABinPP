@@ -1,33 +1,36 @@
-version: '3.3'
 networks:
-  yabin-network:
-    name: yabin-network
+  yabinpp-network:
+    name: yabinpp-network
     ipam:
       driver: default
+
 services:
-  yabin:
-    container_name: yabin
+  yabinpp:
+    container_name: yabinpp
+    image: yabinpp:latest
     ports:
       - '${PORT:-3000}:${PORT:-3000}'
-    image: 'yureien/yabin:latest'
     env_file: .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
-      - yabin-network
+      - yabinpp-network
+
   db:
-    container_name: yabin-db
-    restart: always
+    container_name: yabinpp-db
     image: postgres:15-alpine
     env_file: .env
-    expose:
-      - '5432'
+    healthcheck:
+      interval: 5s
+      timeout: 2s
+      test: pg_isready -U ${DB_USER:-yabinpp_user} -d ${DB_NAME:-yabinpp_db}
     environment:
-      POSTGRES_USER: ${DB_USER:-yabin_user}
-      POSTGRES_PASSWORD: ${DB_USER_PASS:-123}
-      POSTGRES_DB: ${DB_NAME:-yabin_db}
-      POSTGRES_HOST_AUTH_METHOD: "trust"
+      - POSTGRES_USER=${DB_USER:-yabinpp_user}
+      - POSTGRES_PASSWORD=${DB_USER_PASS:-1234}
+      - POSTGRES_DB=${DB_NAME:-yabinpp_db}
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - ./db-data:/var/lib/postgresql/data
     networks:
-      - yabin-network
+      - yabinpp-network

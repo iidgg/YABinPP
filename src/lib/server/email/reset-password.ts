@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/public';
 import prisma from '@db';
 import { generatePasswordResetToken } from '../auth';
 import { sendEmail } from './base';
+import { INSTANCE_NAME } from '../../publicEnv';
 
 export const sendResetEmail = async (userId: string) => {
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -19,7 +20,7 @@ export const sendResetEmail = async (userId: string) => {
 
 If you did not make this request, please disgregard this email.`;
 
-    const subject = 'YABin: Password reset request';
+    const subject = `${INSTANCE_NAME}: Password reset request`;
 
     const sent = await sendEmail(user.email, subject, content);
     if (!sent) return false;

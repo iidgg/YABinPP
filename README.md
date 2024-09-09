@@ -1,16 +1,12 @@
-<h1 align="center">YABin: Yet Another Pastebin</h1>
+<h1 align="center">YABinPP: Yet Another Pastebin Plus</h1>
+<p align="center">This project is a fork of [YABin](https://github.com/iidgg/YABin) by [@Yureien](https://github.com/Yureien).</p>
 
 <p align="center">
-  <a href="https://github.com/sponsors/Yureien"><img src="https://img.shields.io/github/sponsors/Yureien?label=Sponsor&logo=GitHub" alt="GitHub Sponsor" /></a>
-  <a href="https://github.com/Yureien/YABin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Yureien/YABin.svg" alt="GitHub License" /></a>
-  <img alt="Stars" src="https://img.shields.io/github/stars/Yureien/YABin">
-  <a href="https://bin.sohamsen.me/"><img src="https://img.shields.io/website-up-down-green-red/https/bin.sohamsen.me.svg" alt="Demo Website" /></a>
+    <a href="https://github.com/iidgg/YABinPP/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/iidgg/YABinPP.svg" alt="GitHub License" />
+    </a>
+    <img alt="Stars" src="https://img.shields.io/github/stars/iidgg/YABinPP" />
 </p>
-<p align="center">
- <a href="https://ko-fi.com/A0A21C34E"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="ko-fi" /></a>
-</p>
-
-**IMPORTANT:** I recently graduated and I'm trying to balance work and life, and find time to contribute to open source software. If you have any issues, please do shoot out an email to [contact@sohamsen.me](mailto:contact@sohamsen.me). GitHub notifications at times get buried down under tons of spam.
 
 ## Demo
 
@@ -57,12 +53,12 @@ Right now, my instance is using PostgreSQL on Vercel.
 
 By default, it is configured to use PostgreSQL. However, it can be run using any SQL DB such as SQLite or MySQL. To use other backends, please update the provider in [schema.prisma](src/lib/server/prisma/schema.prisma).
 
-- `DB_NAME` is the database name;
-- `DB_HOST` database host (defaults to 'db', but can be changed to aything like localhost)
-- `DB_USER` database user
-- `DB_PORT` database port 5432
-- `DB_PASSWORD` the database user password
-- `DATABASE_URL` you don't need to modify this variable (thanks to dotenv-expand). keep it though!
+-   `DB_NAME` is the database name;
+-   `DB_HOST` database host (defaults to 'db', but can be changed to aything like localhost)
+-   `DB_USER` database user
+-   `DB_PORT` database port 5432
+-   `DB_PASSWORD` the database user password
+-   `DATABASE_URL` you don't need to modify this variable (thanks to dotenv-expand). keep it though!
 
 Remember to modify `SALT` to something secure if you plan on using user accounts.
 
