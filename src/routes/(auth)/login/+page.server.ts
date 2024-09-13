@@ -1,9 +1,8 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import prisma from '@db';
-import { hashPassword } from '$lib/crypto';
+import { compare as comparePassword } from '$lib/utils/hash';
 import { nanoid } from 'nanoid';
-import { env } from '$env/dynamic/private';
 import { getUserIdFromCookie } from '$lib/server/auth';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -24,26 +23,20 @@ export const actions: Actions = {
             });
         }
 
-        const hashedPassword = await hashPassword(
-            password.toString(),
-            env.SALT,
-        );
         const user = await prisma.user.findFirst({
             where: {
                 OR: [
                     {
                         username: usernameOrEmail.toString(),
-                        password: hashedPassword,
                     },
                     {
                         email: usernameOrEmail.toString(),
-                        password: hashedPassword,
                     },
                 ],
             },
         });
 
-        if (!user) {
+        if (!user || !comparePassword(user.password, password.toString())) {
             return fail(400, {
                 success: false,
                 errors: ['Invalid username or password'],

@@ -144,13 +144,3 @@ export async function decryptWithPassword(
     );
     return decoder.decode(dec);
 }
-
-export async function hashPassword(
-    password: string,
-    salt: string,
-): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password + salt);
-    const hash = await crypto.subtle.digest('SHA-512', data);
-    return base64.fromByteArray(new Uint8Array(hash));
-}

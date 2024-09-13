@@ -1,6 +1,6 @@
-import { env } from '$env/dynamic/private';
-import { hashPassword } from '$lib/crypto';
+import { compare as compareSecret, hash as hashSecret } from '$lib/utils/hash';
 import prisma from '@db';
+import type { User } from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 
@@ -22,11 +22,7 @@ export const generateVerificationHash = async (userId: string) => {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error('User not found');
 
-    const hash = await hashPassword(
-        `${user.email}${user.id}${user.password}${user.verified}`,
-        env.SALT,
-    );
-    return hash;
+    return hashSecret(verificationSecret(user)).join();
 };
 
 export const validateVerificationHash = async (
@@ -36,17 +32,16 @@ export const validateVerificationHash = async (
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return false;
 
-    const newHash = await hashPassword(
-        `${user.email}${user.id}${user.password}${user.verified}`,
-        env.SALT,
-    );
-    if (newHash !== hash) return false;
+    const matches = compareSecret(hash, verificationSecret(user));
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: { verified: true },
-    });
-    return true;
+    if (matches) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { verified: true },
+        });
+    }
+
+    return matches;
 };
 
 export const generatePasswordResetToken = async (userId: string) => {
@@ -76,3 +71,6 @@ export const generatePasswordResetToken = async (userId: string) => {
 
     return resetToken.token;
 };
+
+const verificationSecret = (user: User) =>
+    `${user.email}${user.id}${user.password}${user.verified}`;

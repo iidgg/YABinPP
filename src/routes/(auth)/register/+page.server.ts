@@ -1,7 +1,7 @@
 import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import prisma from '@db';
-import { hashPassword } from '$lib/crypto';
+import { hash as hashPassword } from '$lib/utils/hash';
 import { nanoid } from 'nanoid';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
@@ -85,7 +85,7 @@ export const actions: Actions = {
                     name: name.toString(),
                     username: username.toString(),
                     email: email.toString(),
-                    password: await hashPassword(password.toString(), env.SALT),
+                    password: hashPassword(password.toString()).join(),
                     verified: false,
                 },
             });
