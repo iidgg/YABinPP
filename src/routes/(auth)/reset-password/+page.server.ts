@@ -51,8 +51,8 @@ export const actions: Actions = {
 
         try {
             if (newPassword) validatePassword(newPassword);
-        } catch (e: any) {
-            errors.push(e.message);
+        } catch (e: unknown) {
+            errors.push((e as Error).message);
         }
 
         if (newPassword) {

@@ -1,4 +1,4 @@
-import { HttpError, text, type RequestHandler } from '@sveltejs/kit';
+import { type HttpError, text, type RequestHandler } from '@sveltejs/kit';
 import { getPaste } from '$lib/server/services';
 import { decrypt, decryptWithPassword } from '$lib/crypto';
 
@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ url, params }) => {
 
     try {
         data = await getPaste(key);
-    } catch (e: any) {
+    } catch (e: unknown) {
         if (e?.constructor?.name === 'HttpError') {
             const httpError = e as HttpError;
             return text(httpError.body.message, { status: httpError.status });

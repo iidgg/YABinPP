@@ -9,13 +9,13 @@ export async function load({ cookies, params }) {
 
     const userId = await getUserIdFromCookie(cookies);
     const data = await getPaste(key);
-    let { content, language, encrypted, passwordProtected, initVector } = data;
+    const { content, language, encrypted } = data;
 
     let contentHtml: string;
 
     try {
         if (!encrypted && language !== 'plaintext') {
-            loadLanguages([language]);
+            loadLanguages(language);
             contentHtml = Prism.highlight(
                 content,
                 Prism.languages[language],
@@ -34,8 +34,8 @@ export async function load({ cookies, params }) {
         contentHtml,
         encrypted,
         language,
-        passwordProtected,
-        initVector,
+        passwordProtected: data.passwordProtected,
+        initVector: data.initVector,
         isOwner: userId === data.ownerId,
     };
 }

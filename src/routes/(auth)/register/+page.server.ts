@@ -35,26 +35,26 @@ export const actions: Actions = {
 
         try {
             if (email) validateEmail(email);
-        } catch (e: any) {
-            errors.push(e.message);
+        } catch (e: unknown) {
+            errors.push((e as Error).message);
         }
 
         try {
             if (password) validatePassword(password);
-        } catch (e: any) {
-            errors.push(e.message);
+        } catch (e: unknown) {
+            errors.push((e as Error).message);
         }
 
         try {
             if (name) validateName(name);
-        } catch (e: any) {
-            errors.push(e.message);
+        } catch (e: unknown) {
+            errors.push((e as Error).message);
         }
 
         try {
             if (username) validateUsername(username);
-        } catch (e: any) {
-            errors.push(e.message);
+        } catch (e: unknown) {
+            errors.push((e as Error).message);
         }
 
         if (password && password !== cnfPassword) {

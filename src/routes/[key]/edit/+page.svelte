@@ -6,6 +6,7 @@
     import type { PasteCreateResponse, PastePatch } from '$lib/types';
     import { encrypt, encryptWithPassword } from '$lib/crypto';
     import { INSTANCE_NAME } from '../../../lib/publicEnv';
+    import { detectMac } from '../../../lib/utils/util';
 
     export let data: PageData;
     let { isOwner, content, encrypted, passwordProtected, initVector } = data;
@@ -20,9 +21,7 @@
 
     let cmdKey = 'Ctrl';
     onMount(() => {
-        const isMac =
-            (navigator as any).userAgentData?.platform?.toLowerCase() ===
-                'macos' || navigator.platform?.toLowerCase().startsWith('mac');
+        const isMac = detectMac(navigator);
         cmdKey = isMac ? '⌘' : 'Ctrl';
 
         pwInputRef?.focus();
@@ -93,7 +92,6 @@
 
         let finalContent = content;
         let urlParams = '';
-        let passwordProtected = false;
         let initVector: string | undefined;
 
         if (encrypted) {

@@ -15,6 +15,7 @@
     import { env } from '$env/dynamic/public';
     import type { PageData } from './$types';
     import { DHMToSeconds, secondsToDHM } from '$lib/utils/time';
+    import { detectMac } from '../lib/utils/util';
 
     export let data: PageData;
 
@@ -91,9 +92,7 @@
         }
 
         inputRef.focus();
-        const isMac =
-            (navigator as any).userAgentData?.platform?.toLowerCase() ===
-                'macos' || navigator.platform?.toLowerCase().startsWith('mac');
+        const isMac = detectMac(navigator);
         cmdKey = isMac ? '⌘' : 'Ctrl';
 
         document.addEventListener('keydown', (e) => {
@@ -113,7 +112,7 @@
         });
     });
 
-    const newPaste = (e: any) => {
+    const newPaste = (e: MouseEvent | KeyboardEvent) => {
         e?.preventDefault();
         content = '';
         password = '';

@@ -4,6 +4,8 @@
     import { onMount } from 'svelte';
     import type { PageData } from './$types';
     import { INSTANCE_NAME } from '../../lib/publicEnv';
+    import { detectMac } from '../../lib/utils/util';
+    import sanitize from 'sanitize-html';
 
     export let data: PageData;
     let {
@@ -34,9 +36,7 @@
 
     let cmdKey = 'Ctrl';
     onMount(() => {
-        const isMac =
-            (navigator as any).userAgentData?.platform?.toLowerCase() ===
-                'macos' || navigator.platform?.toLowerCase().startsWith('mac');
+        const isMac = detectMac(navigator);
         cmdKey = isMac ? '⌘' : 'Ctrl';
 
         pwInputRef?.focus();
@@ -185,7 +185,8 @@
 
     {#if !encrypted}
         <div class="grow whitespace-pre bg-dark p-4 overflow-x-scroll">
-            {@html contentHtml}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html sanitize(contentHtml, { disallowedTagsMode: 'escape' })}
         </div>
     {:else if error}
         <div class="md:mt-10 text-center text-lg">

@@ -2,12 +2,11 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { INSTANCE_NAME } from '../../lib/publicEnv';
+    import { detectMac } from '../../lib/utils/util';
 
     let cmdKey = 'Ctrl';
     onMount(() => {
-        const isMac =
-            (navigator as any).userAgentData?.platform?.toLowerCase() ===
-                'macos' || navigator.platform?.toLowerCase().startsWith('mac');
+        const isMac = detectMac(navigator);
         cmdKey = isMac ? '⌘' : 'Ctrl';
 
         document.addEventListener('keydown', (e) => {

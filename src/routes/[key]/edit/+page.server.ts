@@ -1,20 +1,16 @@
 import { getUserIdFromCookie } from '$lib/server/auth.js';
 import { getPaste } from '$lib/server/services.js';
-import prisma from '@db';
 
 export async function load({ cookies, params }) {
-    const { key } = params;
-
     const userId = await getUserIdFromCookie(cookies);
-    const data = await getPaste(key);
-    let { content, language, encrypted, passwordProtected, initVector } = data;
+    const data = await getPaste(params.key);
 
     return {
-        content,
-        encrypted,
-        language,
-        passwordProtected,
-        initVector,
+        content: data.content,
+        encrypted: data.encrypted,
+        language: data.language,
+        passwordProtected: data.passwordProtected,
+        initVector: data.initVector,
         isOwner: userId === data.ownerId,
     };
 }
