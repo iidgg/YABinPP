@@ -1,5 +1,4 @@
 <h1 align="center">YABinPP: Yet Another Pastebin Plus</h1>
-<p align="center">This project is a fork of [YABin](https://github.com/iidgg/YABin) by [@Yureien](https://github.com/Yureien).</p>
 
 <p align="center">
     <a href="https://github.com/iidgg/YABinPP/blob/master/LICENSE">
@@ -11,6 +10,7 @@
 ## Demo
 
 ![Demo Video](demo.webp)
+This project is a fork of [YABin](https://github.com/iidgg/YABin) by [@Yureien](https://github.com/Yureien).
 
 ## Why (yet) another pastebin?
 
