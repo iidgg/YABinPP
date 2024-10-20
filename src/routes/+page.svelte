@@ -11,7 +11,7 @@
     import { onMount } from 'svelte';
     import Select from 'svelte-select';
     import { encrypt, encryptWithPassword } from '$lib/crypto';
-    import Hamburger from '$lib/components/Hamburger.svelte';
+    import Hamburger from '$lib/components/icons/Hamburger.svelte';
     import { env } from '$env/dynamic/public';
     import type { PageData } from './$types';
     import { DHMToSeconds, secondsToDHM } from '$lib/utils/time';
