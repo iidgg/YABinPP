@@ -10,7 +10,7 @@
 ## Demo
 
 ![Demo Video](demo.webp)
-This project is a fork of [YABin](https://github.com/iidgg/YABin) by [@Yureien](https://github.com/Yureien).
+This project is a fork of [YABin](https://github.com/Yureien/YABin) by [@Yureien](https://github.com/Yureien).
 
 ## Why (yet) another pastebin?
 
