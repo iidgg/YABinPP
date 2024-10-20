@@ -12,6 +12,7 @@ import {
     validateName,
     validateUsername,
 } from '$lib/server/validate';
+import { COOKIE_SECURE } from '$lib/server/env';
 
 export const actions: Actions = {
     default: async ({ cookies, request }) => {
@@ -124,7 +125,7 @@ export const actions: Actions = {
             cookies.set('token', authToken.token, {
                 path: '/',
                 maxAge: 60 * 60 * 24 * 30, // 30 days
-                secure: true,
+                secure: COOKIE_SECURE,
                 httpOnly: true,
                 sameSite: 'strict',
             });

@@ -4,6 +4,7 @@ import prisma from '@db';
 import { compare as comparePassword } from '$lib/utils/hash';
 import { nanoid } from 'nanoid';
 import { getUserIdFromCookie } from '$lib/server/auth';
+import { COOKIE_SECURE } from '$lib/server/env';
 
 export const load: PageServerLoad = async ({ cookies }) => {
     const userId = await getUserIdFromCookie(cookies);
@@ -66,7 +67,7 @@ export const actions: Actions = {
         cookies.set('token', authToken.token, {
             path: '/',
             maxAge: 60 * 60 * 24 * 30, // 30 days
-            secure: true,
+            secure: COOKIE_SECURE,
             httpOnly: true,
             sameSite: 'strict',
         });
