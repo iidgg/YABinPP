@@ -58,6 +58,7 @@ model Paste {
   createdAt         DateTime  @default(now())
   key               String    @unique @db.VarChar(20)
   content           String
+  hidden            Boolean   @default(false)
   encrypted         Boolean   @default(false)
   passwordProtected Boolean   @default(false)
   initVector        String?   @unique @db.VarChar(64)

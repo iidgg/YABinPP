@@ -79,6 +79,17 @@
         </div>
 
         <div>
+            <label for="hidden" class="py-2">Private</label>
+            <input
+                id="hidden"
+                class="bg-dark px-2 py-1"
+                type="checkbox"
+                name="hidden"
+                checked={settings?.defaults?.hidden}
+            />
+        </div>
+
+        <div>
             <span>Expires in:</span>
             <div class="grid grid-cols-3 gap-2 justify-center items-center">
                 <input

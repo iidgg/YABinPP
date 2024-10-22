@@ -79,6 +79,7 @@
                 try {
                     const keyStr = $page.url.hash.slice(1);
                     if (!initVector || !keyStr) throw new Error('Missing key');
+                    if (!content) throw new Error('Missing content');
 
                     const { decrypt } = await import('$lib/crypto');
                     content = await decrypt(
@@ -98,6 +99,7 @@
     async function decryptPassword() {
         try {
             if (!initVector) throw new Error('Missing key');
+            if (!content) throw new Error('Missing content');
 
             const { decryptWithPassword } = await import('$lib/crypto');
             content = await decryptWithPassword(content, initVector, password);
@@ -109,7 +111,9 @@
     }
 
     function copyContent() {
-        navigator.clipboard.writeText(content);
+        if (content) {
+            navigator.clipboard.writeText(content);
+        }
     }
 
     function editPaste() {

@@ -8,8 +8,17 @@ export async function load({ cookies, params }) {
     const { key } = params;
 
     const userId = await getUserIdFromCookie(cookies);
-    const data = await getPaste(key);
-    const { content, language, encrypted } = data;
+    const paste = await getPaste(key);
+    const { content, language, encrypted } = paste;
+
+    if (paste.hidden) {
+        const userId = await getUserIdFromCookie(cookies);
+        if (paste.ownerId !== userId)
+            return {
+                contentHtml: 'Unauthorized: Private paste.',
+                isOwner: false,
+            };
+    }
 
     let contentHtml: string;
 
@@ -34,8 +43,8 @@ export async function load({ cookies, params }) {
         contentHtml,
         encrypted,
         language,
-        passwordProtected: data.passwordProtected,
-        initVector: data.initVector,
-        isOwner: userId === data.ownerId,
+        passwordProtected: paste.passwordProtected,
+        initVector: paste.initVector,
+        isOwner: userId === paste.ownerId,
     };
 }

@@ -57,6 +57,7 @@
 
     const updateInitialConfig = (defaults: UserSettings['defaults']) => {
         if (!defaults) return;
+        if (defaults?.hidden !== undefined) config.hidden = defaults.hidden;
         if (defaults?.encrypted !== undefined)
             config.encrypted = defaults.encrypted;
         if (defaults?.burnAfterRead !== undefined)
@@ -346,6 +347,15 @@
                     id="burn"
                     type="checkbox"
                     bind:checked={config.burnAfterRead}
+                />
+            </div>
+
+            <div>
+                <label for="hidden" class="py-1">Private?</label>
+                <input
+                    id="hidden"
+                    type="checkbox"
+                    bind:checked={config.hidden}
                 />
             </div>
 

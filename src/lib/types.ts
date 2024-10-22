@@ -11,6 +11,7 @@ export interface SuccessResponse {
 
 export interface PasteConfig {
     language?: string;
+    hidden?: boolean;
     encrypted?: boolean;
     expiresAfter?: number;
     burnAfterRead?: boolean;
@@ -86,6 +87,7 @@ export interface TokenResetResponse {
 
 export interface UserSettings {
     defaults?: {
+        hidden?: boolean;
         encrypted?: boolean;
         burnAfterRead?: boolean;
         expiresAfterSeconds?: number;

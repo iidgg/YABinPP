@@ -53,7 +53,7 @@
             }
         });
 
-        if (encrypted && !passwordProtected) {
+        if (content && encrypted && !passwordProtected) {
             (async () => {
                 try {
                     const keyStr = $page.url.hash.slice(1);
@@ -77,6 +77,7 @@
     async function decryptPassword() {
         try {
             if (!initVector) throw new Error('Missing key');
+            if (!content) throw new Error('Missing content');
 
             const { decryptWithPassword } = await import('$lib/crypto');
             content = await decryptWithPassword(content, initVector, password);

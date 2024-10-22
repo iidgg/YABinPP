@@ -6,6 +6,7 @@ export async function getPaste(key: string) {
         where: { key },
         select: {
             content: true,
+            hidden: true,
             encrypted: true,
             passwordProtected: true,
             initVector: true,
@@ -31,6 +32,7 @@ export async function getPaste(key: string) {
 
     const {
         content,
+        hidden,
         encrypted,
         passwordProtected,
         initVector,
@@ -41,6 +43,7 @@ export async function getPaste(key: string) {
     return {
         key,
         content,
+        hidden,
         encrypted,
         passwordProtected,
         initVector,

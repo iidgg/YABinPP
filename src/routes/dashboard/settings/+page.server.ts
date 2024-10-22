@@ -26,6 +26,7 @@ export const actions: Actions = {
             formData.get('expires-after-seconds')?.toString() ?? '0',
         );
         const data = {
+            hidden: formData.get('hidden') === 'on',
             encrypted: formData.get('encrypted') === 'on',
             burnAfterRead: formData.get('burn-after-read') === 'on',
             expiresAfterSeconds: Math.max(

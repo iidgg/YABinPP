@@ -11,7 +11,7 @@ import { getUserIdFromCookie } from '$lib/server/auth';
 import { env } from '$env/dynamic/public';
 import { getTokenInfo, isScopeEnabled } from '../../../lib/server/token';
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ cookies, request, url }) => {
     const key = url.searchParams.get('key');
     if (!key) {
         return json(
@@ -49,7 +49,31 @@ export const GET: RequestHandler = async ({ url }) => {
         data: paste,
     };
 
-    return json(response);
+    if (!paste.hidden) {
+        return json(response);
+    }
+
+    // Paste is hidden, verify auth
+    const token = request.headers.get('Authorization');
+    let userId: string | null;
+
+    if (token) {
+        const info = await getTokenInfo(token);
+        if (!info || !isScopeEnabled(info.scopes, 'paste.read')) {
+            return json({ success: false }, { status: 401 });
+        }
+
+        userId = info.userId;
+    } else {
+        userId = await getUserIdFromCookie(cookies);
+    }
+
+    // User provided auth & user owns it.
+    if (userId && userId === paste.ownerId) {
+        return json(response);
+    }
+
+    return json({ success: false }, { status: 401 });
 };
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
@@ -62,7 +86,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     if (token) {
         const info = await getTokenInfo(token);
         if (!info || !isScopeEnabled(info.scopes, 'paste.write')) {
-            return json({ success: false }, { status: 403 });
+            return json({ success: false }, { status: 401 });
         }
 
         userId = info.userId;
@@ -121,6 +145,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             key,
             content,
             language: config?.language ?? 'plaintext',
+            hidden: config?.hidden ?? false,
             encrypted: config?.encrypted ?? false,
             passwordProtected,
             expiresCount: config?.burnAfterRead ? 2 : null,
@@ -150,7 +175,7 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
     if (token) {
         const info = await getTokenInfo(token);
         if (!info || !isScopeEnabled(info.scopes, 'paste.edit')) {
-            return json({ success: false }, { status: 403 });
+            return json({ success: false }, { status: 401 });
         }
 
         userId = info.userId;
