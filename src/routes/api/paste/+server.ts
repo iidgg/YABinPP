@@ -9,6 +9,7 @@ import prisma from '@db';
 import { getPaste } from '$lib/server/services.js';
 import { getUserIdFromCookie } from '$lib/server/auth';
 import { env } from '$env/dynamic/public';
+import { getTokenInfo, isScopeEnabled } from '../../../lib/server/token';
 
 export const GET: RequestHandler = async ({ url }) => {
     const key = url.searchParams.get('key');
@@ -43,8 +44,6 @@ export const GET: RequestHandler = async ({ url }) => {
         );
     }
 
-    console.log(paste);
-
     const response: PasteCreateResponse = {
         success: true,
         data: paste,
@@ -54,10 +53,22 @@ export const GET: RequestHandler = async ({ url }) => {
 };
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
+    const token = request.headers.get('Authorization');
     const { content, config, passwordProtected, initVector }: Paste =
         await request.json();
 
-    const userId = await getUserIdFromCookie(cookies);
+    let userId: string | null;
+
+    if (token) {
+        const info = await getTokenInfo(token);
+        if (!info || !isScopeEnabled(info.scopes, 'paste.write')) {
+            return json({ success: false }, { status: 403 });
+        }
+
+        userId = info.userId;
+    } else {
+        userId = await getUserIdFromCookie(cookies);
+    }
 
     if (env.PUBLIC_ANONYMOUS_PASTES_ENABLED === 'false' && !userId) {
         return json(
@@ -130,10 +141,22 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 };
 
 export const PATCH: RequestHandler = async ({ cookies, request }) => {
+    const token = request.headers.get('Authorization');
     const { key, content, encrypted, initVector }: PastePatch =
         await request.json();
 
-    const userId = await getUserIdFromCookie(cookies);
+    let userId: string | null;
+
+    if (token) {
+        const info = await getTokenInfo(token);
+        if (!info || !isScopeEnabled(info.scopes, 'paste.edit')) {
+            return json({ success: false }, { status: 403 });
+        }
+
+        userId = info.userId;
+    } else {
+        userId = await getUserIdFromCookie(cookies);
+    }
 
     if (!key && !content) {
         return json(

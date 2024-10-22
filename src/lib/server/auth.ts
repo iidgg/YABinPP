@@ -4,6 +4,14 @@ import type { User } from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 
+export const userExists = async (userId: string) =>
+    await prisma.user
+        .findUnique({
+            where: { id: userId },
+            select: { id: true },
+        })
+        .then((d) => d?.id ?? null);
+
 export const getUserIdFromCookie = async (cookies: Cookies) => {
     const token = cookies.get('token');
     if (!token) return null;
@@ -12,8 +20,10 @@ export const getUserIdFromCookie = async (cookies: Cookies) => {
         where: { token, expiresAt: { gt: new Date() } },
         include: { user: { select: { id: true, verified: true } } },
     });
-    if (!authToken) return null;
-    if (!authToken.user.verified) return null;
+
+    if (!authToken?.user.verified) {
+        return null;
+    }
 
     return authToken.user.id;
 };

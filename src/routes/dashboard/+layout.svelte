@@ -4,11 +4,17 @@
     import { INSTANCE_NAME } from '../../lib/publicEnv';
     import { detectMac } from '../../lib/utils/util';
 
-    let cmdKey = 'Ctrl';
+    let cmdKey = 'Ctrl',
+        isHttps = true,
+        isLocalhost = true,
+        acknowledgeHttp = true;
+
     onMount(() => {
         const isMac = detectMac(navigator);
         cmdKey = isMac ? '⌘' : 'Ctrl';
-
+        isHttps = location.protocol === 'https:';
+        isLocalhost = location.hostname === 'localhost';
+        acknowledgeHttp = localStorage.getItem('acknowledge_http') === 'true';
         document.addEventListener('keydown', (e) => {
             if (e.key === 'n' && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault();
@@ -52,7 +58,32 @@
         </div>
     </div>
 
-    <div class="px-24 py-4">
+    <div class="px-2 py-4 md:px-24">
+        {#if !isHttps && !isLocalhost && !acknowledgeHttp}
+            <div
+                class="p-4 mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded"
+                role="alert"
+            >
+                <span class="font-bold">Warning: Unsecure Connection!</span>
+                <p>
+                    You are accessing this dashboard over an unsecure connection
+                    (HTTP). This may expose your personal information to
+                    potential attackers. If you did not intend to access this
+                    page in this manner, please exit immediately and consider
+                    resetting your password. Note that some features, such as
+                    copy buttons, may not function correctly in this
+                    environment.
+                </p>
+                <button
+                    class="font-semibold mt-2 hover:underline"
+                    on:click={() => {
+                        acknowledgeHttp = true;
+                        localStorage.setItem('acknowledge_http', 'true');
+                    }}>&gt; never show this again</button
+                >
+            </div>
+        {/if}
+
         <slot />
     </div>
 </div>

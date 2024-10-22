@@ -11,7 +11,8 @@
         "lint": "prettier --plugin-search-dir . --check . && eslint .",
         "format": "prettier --write .",
         "prepare": "svelte-kit sync",
-        "postinstall": "prisma generate --schema=./src/lib/server/prisma/schema.prisma"
+        "postinstall": "prisma generate --schema=./src/lib/server/prisma/schema.prisma",
+        "migrate:dev": "prisma migrate dev --schema=./src/lib/server/prisma/schema.prisma"
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^3.2.0",
@@ -52,5 +53,6 @@
         "prism-themes": "^1.9.0",
         "prismjs": "^1.29.0",
         "sanitize-html": "^2.13.0"
-    }
+    },
+    "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

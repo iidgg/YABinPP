@@ -1,4 +1,4 @@
-import { deleteExpiredPastes } from '$lib/server/services';
+import { deleteExpiredPastes, deleteExpiredTokens } from '$lib/server/services';
 import cron from 'node-cron';
 
 export async function handle({ event, resolve }) {
@@ -13,4 +13,5 @@ export async function handle({ event, resolve }) {
 // Cron-job to delete expired pastes
 cron.schedule('*/5 * * * *', async () => {
     await deleteExpiredPastes();
+    await deleteExpiredTokens();
 });

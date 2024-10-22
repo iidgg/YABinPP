@@ -19,8 +19,20 @@ model User {
   verified    Boolean     @default(false)
   settings    Json        @default("{}")
   pastes      Paste[]
+  ApiToken    ApiToken[]
   AuthToken   AuthToken[]
   ResetToken  ResetToken?
+}
+
+model ApiToken {
+  id          String     @id @default(nanoid(16))
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime?
+  name        String
+  token       String     @unique
+  scopes      String     @db.Bit(3)
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AuthToken {

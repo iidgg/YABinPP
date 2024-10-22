@@ -58,3 +58,13 @@ export async function deleteExpiredPastes() {
         },
     });
 }
+
+export async function deleteExpiredTokens() {
+    await prisma.apiToken.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date(),
+            },
+        },
+    });
+}
