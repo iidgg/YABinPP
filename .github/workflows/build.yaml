@@ -7,7 +7,7 @@ on:
 
 env:
   # {{ github.repository }} cannot be used here as the repository name contains upper case characters.
-  GHCR_REPO: ghcr.io/${{ github.repository_owner }}/yabinpp$
+  GHCR_REPO: ghcr.io/${{ github.repository_owner }}/yabinpp
 
 jobs:
   build-cri:
