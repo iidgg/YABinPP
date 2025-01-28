@@ -83,7 +83,7 @@ jobs:
   # of the container - in effect producing a multi-arch manifest
   build-release-bundle-manifest:
     needs:
-      - cri
+      - build-cri
     runs-on: ubuntu-latest
     # Only run if this commit references the default branch.
     if: ${{ always() && format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
