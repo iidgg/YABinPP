@@ -145,7 +145,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
             key,
             content,
             language: config?.language ?? 'plaintext',
-            hidden: config?.hidden ?? false,
+            hidden: config?.hidden ?? userId ? true : false,
             encrypted: config?.encrypted ?? false,
             passwordProtected,
             expiresCount: config?.burnAfterRead ? 2 : null,

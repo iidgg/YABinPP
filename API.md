@@ -17,12 +17,13 @@
 
 **Config Object:**
 
-| Name            | Type      | Description                                              | Required |
-| --------------- | --------- | -------------------------------------------------------- | -------- |
-| `language`      | `string`  | Programming language of the paste. Default: `plaintext`. | No       |
-| `encrypted`     | `boolean` | Whether the paste is encrypted. Default: `false`.        | No       |
-| `expiresAfter`  | `number`  | Time in seconds until the paste expires.                 | No       |
-| `burnAfterRead` | `boolean` | Whether the paste is deleted after reading.              | No       |
+| Name            | Type      | Description                                                                                                                | Required |
+| --------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `language`      | `string`  | Programming language of the paste. Default: `plaintext`.                                                                   | No       |
+| `hidden`        | `boolean` | Whether the paste is hidden. If set to "true," only the owner can access it while logged in. Default: `true` if logged in. | No       |
+| `encrypted`     | `boolean` | Whether the paste is encrypted. Default: `false`.                                                                          | No       |
+| `expiresAfter`  | `number`  | Time in seconds until the paste expires.                                                                                   | No       |
+| `burnAfterRead` | `boolean` | Whether the paste is deleted after reading.                                                                                | No       |
 
 ### Examples
 
