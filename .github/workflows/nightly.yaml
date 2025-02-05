@@ -1,0 +1,127 @@
+name: nightly
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'static/**'
+      - '.github/**'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+
+env:
+  # {{ github.repository }} cannot be used here as the repository name contains upper case characters.
+  GHCR_REPO: ghcr.io/${{ github.repository_owner }}/yabinpp
+
+jobs:
+  build-cri:
+    strategy:
+      matrix:
+        arch:
+          - os: ubuntu-24.04
+            name: linux/amd64
+            label: amd64
+          - os: ubuntu-24.04-arm
+            name: linux/arm64
+            label: arm64
+    runs-on: ${{ matrix.arch.os }}
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Generate CRI metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.GHCR_REPO }}
+          labels: |
+            org.opencontainers.image.title=YABinPP
+            org.opencontainers.image.description=YABinPP (YABin Plus Plus) is a fork of YABin, a simple yet feature-rich pastebin.
+            org.opencontainers.image.url=https://github.com/iidgg/YABinPP
+            org.opencontainers.image.source=https://github.com/iidgg/YABinPP
+            org.opencontainers.image.vendor=iidgg
+          tags: |
+            type=raw,value=nightly,suffix=-${{ matrix.arch.label }}
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.arch.name }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Provenance must be off for the later manifest generation stage.
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+
+  # build-release-bundle-manifest produces a container bundle manifest that points to both the amd64 and arm64 versions
+  # of the container - in effect producing a multi-arch manifest
+  build-release-bundle-manifest:
+    needs:
+      - build-cri
+    runs-on: ubuntu-latest
+    # Only run if this commit references the default branch.
+    if: ${{ always() && format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
+    strategy:
+      matrix:
+        # Matrixed to provide for using other container stores (e.g docker) later down the line.
+        container_store:
+          - ghcr
+
+    steps:
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version
+        id: version
+        run: |
+          echo 'version='"$(date +"%Y%m%d-$(tr -dc 'a-z' </dev/urandom | head -c 4)")" >> $GITHUB_OUTPUT
+
+      - name: Create and push manifest (GHCR)
+        uses: Noelware/docker-manifest-action@0.4.2
+        if: matrix.container_store == 'ghcr'
+        with:
+          inputs: ${{env.GHCR_REPO}}:nightly,${{env.GHCR_REPO}}:${{steps.version.outputs.version}}
+          images: ${{env.GHCR_REPO}}:nightly-amd64,${{env.GHCR_REPO}}:nightly-arm64
+          push: true

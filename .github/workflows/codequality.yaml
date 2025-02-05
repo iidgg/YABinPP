@@ -4,10 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
-
-env:
-  GHCR_REPO: ghcr.io/${{ github.repository }}
-
+  workflow_dispatch:
 
 jobs:
   prettier:
