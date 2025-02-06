@@ -267,7 +267,7 @@
                 <div class="flex flex-row gap-4 mb-4 justify-center">
                     {#if data.loggedIn}
                         <a
-                            href="/dashboard/settings"
+                            href="/dashboard"
                             class="underline underline-offset-4 py-1"
                             >Dashboard</a
                         >

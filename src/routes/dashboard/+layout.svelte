@@ -34,11 +34,15 @@
         <div class="flex flex-row items-center gap-4">
             <h1 class="mr-auto text-2xl"><a href="/">{INSTANCE_NAME}</a></h1>
 
-            <!-- <a class="underline underline-offset-4 px-2 py-1" href="/dashboard/pastes">Pastes</a> -->
+            <a class="underline underline-offset-4 px-2 py-1" href="/dashboard"
+                >Dashboard
+            </a>
+
             <a
                 class="underline underline-offset-4 px-2 py-1"
-                href="/dashboard/settings">Settings</a
-            >
+                href="/dashboard/settings"
+                >Settings
+            </a>
 
             <button
                 class="underline underline-offset-4 px-2 py-1"
@@ -53,7 +57,7 @@
                 title="{cmdKey}+N"
                 on:click={() => goto('/')}
             >
-                New
+                Home/New
             </button>
         </div>
     </div>

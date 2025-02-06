@@ -41,7 +41,7 @@
                 title="{cmdKey}+N"
                 on:click={() => goto('/')}
             >
-                New
+                Home/New
             </button>
         </div>
     </div>
