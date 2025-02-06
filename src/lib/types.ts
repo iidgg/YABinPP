@@ -19,10 +19,11 @@ export interface PasteConfig {
 }
 
 export interface Paste {
+    title?: string;
     content: string;
-    config?: PasteConfig;
     passwordProtected?: boolean;
     initVector?: string;
+    config?: PasteConfig;
 }
 
 export interface PastePatch {

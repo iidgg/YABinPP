@@ -50,6 +50,7 @@
     let inputRef: HTMLTextAreaElement;
     let placeholderRef: HTMLDivElement;
     let cmdKey = 'Ctrl';
+    let title: string = '';
     let content: string = '';
     let password: string = '';
     let config: PasteConfig = { ...initialConfig };
@@ -147,10 +148,11 @@
         }
 
         const data: Paste = {
+            title,
             content: finalContent,
-            config,
             passwordProtected,
             initVector,
+            config,
         };
 
         try {
@@ -193,6 +195,15 @@
     <div
         class="p-2 col-span-12 sm:col-span-8 lg:col-span-10 flex flex-col relative"
     >
+        <div class="flex items-center car mx-4 my-1">
+            <label for="title" class="px-2 text-gray-400">Title:</label>
+            <input
+                class="flex-grow italic text-gray-200 border-none outline-none bg-transparent resize-none border-b-2"
+                spellcheck="false"
+                id="title"
+                bind:value={title}
+            />
+        </div>
         <textarea
             class="px-2 grow border-none outline-none bg-transparent resize-none"
             spellcheck="false"
@@ -211,6 +222,9 @@
                 You need to login to save pastes.
             {:else}
                 Type or paste anything here, and then {cmdKey}+S to save.
+                <br /> <br />
+                Optionally, set a title for you to see later. Saved title will not
+                be encrypted.
             {/if}
             <br /><br />
             Visit Info page to get the APIs and more.
@@ -267,7 +281,7 @@
                 <div class="flex flex-row gap-4 mb-4 justify-center">
                     {#if data.loggedIn}
                         <a
-                            href="/dashboard/settings"
+                            href="/dashboard"
                             class="underline underline-offset-4 py-1"
                             >Dashboard</a
                         >

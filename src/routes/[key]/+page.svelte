@@ -9,6 +9,7 @@
 
     export let data: PageData;
     let {
+        title,
         isOwner,
         content,
         contentHtml,
@@ -187,6 +188,16 @@
         </div>
     </div>
 
+    {#if title}
+        <p
+            id="title"
+            title="Titled: {title}"
+            class="bg-dark py-2 italic text-gray-200 text-lg text-center"
+        >
+            {title}
+        </p>
+    {/if}
+
     {#if !encrypted}
         <div class="grow whitespace-pre bg-dark p-4 overflow-x-scroll">
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
@@ -236,5 +247,19 @@
         background-color: var(--color-dark) !important;
         padding: 0 !important;
         margin: 0 !important;
+    }
+
+    #title {
+        opacity: 0.8;
+        border-bottom: 10px;
+        border-color: rgb(11, 48, 71);
+        background-size: 10px 10px;
+        background-image: repeating-linear-gradient(
+            45deg,
+            rgb(11, 48, 71) 0,
+            rgb(11, 48, 71) 1px,
+            var(--color-dark) 0,
+            var(--color-dark) 50%
+        );
     }
 </style>

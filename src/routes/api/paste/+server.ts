@@ -78,7 +78,7 @@ export const GET: RequestHandler = async ({ cookies, request, url }) => {
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
     const token = request.headers.get('Authorization');
-    const { content, config, passwordProtected, initVector }: Paste =
+    const { title, content, passwordProtected, initVector, config }: Paste =
         await request.json();
 
     let userId: string | null;
@@ -143,6 +143,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
     await prisma.paste.create({
         data: {
             key,
+            title,
             content,
             language: config?.language ?? 'plaintext',
             hidden: config?.hidden ?? userId ? true : false,
