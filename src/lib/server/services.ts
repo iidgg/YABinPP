@@ -2,27 +2,12 @@ import { error } from '@sveltejs/kit';
 import prisma from '@db';
 
 export async function getPaste(key: string) {
-    let data = await prisma.paste.findUnique({
-        where: { key },
-        select: {
-            content: true,
-            hidden: true,
-            encrypted: true,
-            passwordProtected: true,
-            initVector: true,
-            language: true,
-            expiresCount: true,
-            readCount: true,
-            ownerId: true,
-        },
-    });
-
-    if (!data) error(404, 'Not found');
-
-    data = await prisma.paste.update({
+    const data = await prisma.paste.update({
         where: { key },
         data: { readCount: { increment: 1 } },
     });
+
+    if (!data) error(404, 'Not found');
 
     const { expiresCount, readCount } = data;
     if (expiresCount !== null && expiresCount < readCount) {
@@ -31,6 +16,7 @@ export async function getPaste(key: string) {
     }
 
     const {
+        title,
         content,
         hidden,
         encrypted,
@@ -42,6 +28,7 @@ export async function getPaste(key: string) {
 
     return {
         key,
+        title,
         content,
         hidden,
         encrypted,

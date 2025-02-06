@@ -9,7 +9,7 @@ export async function load({ cookies, params }) {
 
     const userId = await getUserIdFromCookie(cookies);
     const paste = await getPaste(key);
-    const { content, language, encrypted } = paste;
+    const { title, content, language, encrypted } = paste;
 
     if (paste.hidden) {
         const userId = await getUserIdFromCookie(cookies);
@@ -39,6 +39,7 @@ export async function load({ cookies, params }) {
     }
 
     return {
+        title,
         content,
         contentHtml,
         encrypted,
