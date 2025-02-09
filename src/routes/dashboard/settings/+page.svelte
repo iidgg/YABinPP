@@ -129,13 +129,4 @@
             {/if}
         </div>
     </form>
-
-    <h4 class="text-2xl mt-6">
-        Tokens <a
-            class="text-base italic text-cyan-400 hover:underline"
-            href="/dashboard/settings/tokens">/ here</a
-        >
-    </h4>
-
-    <p class="ml-4 text-gray-400">Create, delete or reset api tokens</p>
 </div>

@@ -5,6 +5,7 @@
 :root {
     --color-primary: #e5e1d1;
     --color-background: #101419;
+    --color-background-muted: #171d24;
     --color-dark: rgba(0, 0, 0, 0.7);
 }
 

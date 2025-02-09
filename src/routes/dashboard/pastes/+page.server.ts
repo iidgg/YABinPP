@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getUserIdFromCookie } from '../../lib/server/auth';
+import { getUserIdFromCookie } from '../../../lib/server/auth';
 import prisma from '@db';
 import { type Actions } from '@sveltejs/kit';
 
@@ -15,6 +15,7 @@ export async function load({ cookies }) {
         orderBy: { createdAt: 'desc' },
         select: {
             key: true,
+            title: true,
             createdAt: true,
             expiresAt: true,
             readCount: true,
@@ -47,6 +48,7 @@ export const actions: Actions = {
             },
             select: {
                 key: true,
+                title: true,
                 createdAt: true,
                 expiresAt: true,
                 readCount: true,

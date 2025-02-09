@@ -2,6 +2,11 @@
 
 import type { Dict } from '../types';
 
+/** Returns true if secure, false otherwise */
+export const detectSecureConnection = (location: Location) =>
+    location.protocol.startsWith('https') || location.hostname === 'localhost';
+
+/** Returns true if mac, false otherwise */
 export const detectMac = (navigator: Navigator) =>
     (navigator as any).userAgentData?.platform?.toLowerCase() === 'macos' ||
     navigator.platform?.toLowerCase().startsWith('mac');
