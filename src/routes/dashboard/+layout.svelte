@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row px-4">
+    <div class="flex flex-col md:flex-row md:px-4">
         <div>
             <Sidebar />
         </div>
