@@ -33,7 +33,7 @@
 </script>
 
 <div class="overflow-x-auto">
-    <table class="text-sm text-left rtl:text-right text-gray-400">
+    <table class="text-gray-400">
         <thead class="text-xs uppercase text-gray-400 whitespace-nowrap">
             <tr>
                 <th scope="col" class="px-6 py-3">key</th>
