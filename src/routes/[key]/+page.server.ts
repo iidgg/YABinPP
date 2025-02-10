@@ -11,13 +11,11 @@ export async function load({ cookies, params }) {
     const paste = await getPaste(key);
     const { title, content, language, encrypted } = paste;
 
-    if (paste.hidden) {
-        const userId = await getUserIdFromCookie(cookies);
-        if (paste.ownerId !== userId)
-            return {
-                contentHtml: 'Unauthorized: Private paste.',
-                isOwner: false,
-            };
+    if (paste.hidden && paste.ownerId !== userId) {
+        return {
+            contentHtml: 'Unauthorized: Private paste.',
+            isOwner: false,
+        };
     }
 
     let contentHtml: string;

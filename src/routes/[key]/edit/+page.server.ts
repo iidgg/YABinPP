@@ -15,7 +15,7 @@ export async function load({ cookies, params }) {
         isOwner: userId === paste.ownerId,
     };
 
-    if (!paste.hidden || paste.ownerId === userId) {
+    if (data.isOwner) {
         return data;
     }
 

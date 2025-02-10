@@ -38,7 +38,7 @@ export async function getToken(tokenId: string) {
             id: tokenId,
             OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
         },
-        select: { name: true, scopes: true, expiresAt: true },
+        select: { userId: true, name: true, scopes: true, expiresAt: true },
     });
 }
 

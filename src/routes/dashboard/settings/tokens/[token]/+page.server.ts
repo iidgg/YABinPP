@@ -16,7 +16,8 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
     }
 
     const token = await getToken(tokenId);
-    if (!token) redirect(303, '/dashboard/settings/tokens');
+    if (!token || token.userId !== userId)
+        redirect(303, '/dashboard/settings/tokens');
 
     return {
         token: {
