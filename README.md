@@ -100,4 +100,4 @@ My instance uses Vercel. Checkout the `vercel` branch for the Vercel configurati
 
 If you host one and want to make it public, just open an issue and I will add it here!
 
-1. [bin.sohamsen.me](https://bin.sohamsen.me) ![Website Status](https://img.shields.io/website-up-down-green-red/https/bin.sohamsen.me.svg)
+1. [bin.iduu.net](https://bin.iduu.net) ![Website Status](https://img.shields.io/website-up-down-green-red/https/bin.iduu.net.svg)
