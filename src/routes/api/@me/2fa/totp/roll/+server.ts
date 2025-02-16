@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const uri = TOTP.secretURI(user.username, secret);
     const twoFA = await prisma.twoFA.update({
         where: { userId_type: { userId, type: TwoFA.TOTP } },
-        data: { secret, uri },
+        data: { secret, uri, active: false },
     });
 
     const response = {
