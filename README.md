@@ -12,9 +12,7 @@
 ![Demo Video](demo.webp)
 This project is a fork of [YABin](https://github.com/Yureien/YABin) by [@Yureien](https://github.com/Yureien).
 
-## Why (yet) another pastebin?
-
-Well, cause no pastebin I could find had ALL of the following features:
+## Features
 
 -   Modern and minimal UI (This site's design was inspired by bin).
 -   Optional end-to-end encryption (we're using AES-256-GCM) with optional password protection (using PBKDF2).
@@ -43,58 +41,46 @@ yabin read "<URL>"
 
 See [cli/README.md](cli/README.md) for detailed instructions and library usage.
 
-## How to Host
+## Setup
 
-**Requirements:** Node.js (tested on 18+, should work with 14+), and a SQL database (tested on PostgreSQL, should work with MySQL and SQLite).
+Quick docker-compose.yml setup:
 
-Right now, my instance is using PostgreSQL on Vercel.
+```yml
+networks:
+    yabinpp-network:
+        name: yabinpp-network
+        ipam:
+            driver: default
 
-### .env Configuration
+services:
+    yabinpp:
+        image: ghcr.io/iidgg/yabinpp
+        ports:
+            - 3000:3000/tcp
+        environment:
+            - DATABASE_URL=postgres://john:password@db/yabinpp
+            - PUBLIC_URL=https://example.com # No trailing slash
+        networks:
+            - yabinpp-network
+        depends_on:
+            db:
+                condition: service_healthy
 
-By default, it is configured to use PostgreSQL. However, it can be run using any SQL DB such as SQLite or MySQL. To use other backends, please update the provider in [schema.prisma](src/lib/server/prisma/schema.prisma).
-
--   `DB_NAME` is the database name;
--   `DB_HOST` database host (defaults to 'db', but can be changed to aything like localhost)
--   `DB_USER` database user
--   `DB_PORT` database port 5432
--   `DB_PASSWORD` the database user password
--   `DATABASE_URL` you don't need to modify this variable (thanks to dotenv-expand). keep it though!
-
-Remember to modify `SALT` to something secure if you plan on using user accounts.
-
-You can disable or enable public registration by modifying the `PUBLIC_REGISTRATION_ENABLED` variable to `true` or `false`.
-
-You can enable custom paste paths for everyone with the variable `PUBLIC_CUSTOM_PATHS_ENABLED`. If it is `false`, only users who are logged in can use custom paths.
-
-You can disable anonymous pastes by setting `PUBLIC_ANONYMOUS_PASTES_ENABLED` to `false`.
-
-By default, if no e-mail services are configured, all user accounts will be marked as validated. To enable e-mail validation, please configure the `MAIL_*` variables.
-
-#### Locally
-
-```bash
-yarn install
-cp .env.example .env
-# Modify .env to add the database URL and other parameters
-yarn dev
+    db:
+        image: postgres:15-alpine
+        healthcheck:
+            interval: 5s
+            timeout: 2s
+            test: pg_isready -U ${DB_USER:-yabinpp_user} -d ${DB_NAME:-yabinpp_db}
+        environment:
+            - POSTGRES_USER=john
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DATABASE=yabinpp
+        volumes:
+            - ./db-data:/var/lib/postgresql/data
+        networks:
+            - yabinpp-network
 ```
-
-#### Using Docker
-
-```bash
-docker run --env-file .env -it -p 3000:3000 yureien/yabin:latest
-# Or with Docker Compose
-# Remember to change the DB password!
-docker compose up
-```
-
-_Fun fact: At a point of time, my instance used to be hosted in a Kubernetes cluster_
-
-#### Other Serverless Environments (Cloudflare Workers, Netlify etc.)
-
-I have not yet tested this, but this is made with SvelteKit. Please take a look at the [SvelteKit documentation](https://kit.svelte.dev/docs/adapters) for more information. If there are any issues, please open an issue, and I will put up a proper guide on how to deploy on such environmments.
-
-My instance uses Vercel. Checkout the `vercel` branch for the Vercel configuration.
 
 ## Public Instances
 

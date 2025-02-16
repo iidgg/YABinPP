@@ -6,30 +6,28 @@ networks:
 
 services:
   yabinpp:
-    container_name: yabinpp
-    image: yabinpp:latest
+    image: ghcr.io/iidgg/yabinpp
     ports:
-      - '${PORT:-3000}:${PORT:-3000}'
-    env_file: .env
+      - 3000:3000/tcp
+    environment:
+      - DATABASE_URL=postgres://john:password@db/yabinpp
+      - PUBLIC_URL=https://example.com # No trailing slash
+    networks:
+      - yabinpp-network
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - yabinpp-network
 
   db:
-    container_name: yabinpp-db
     image: postgres:15-alpine
-    env_file: .env
     healthcheck:
       interval: 5s
       timeout: 2s
       test: pg_isready -U ${DB_USER:-yabinpp_user} -d ${DB_NAME:-yabinpp_db}
     environment:
-      - POSTGRES_USER=${DB_USER:-yabinpp_user}
-      - POSTGRES_PASSWORD=${DB_USER_PASS:-1234}
-      - POSTGRES_DB=${DB_NAME:-yabinpp_db}
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=john
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DATABASE=yabinpp
     volumes:
       - ./db-data:/var/lib/postgresql/data
     networks:
