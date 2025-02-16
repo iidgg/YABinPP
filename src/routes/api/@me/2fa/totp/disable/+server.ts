@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { getUserIdFromCookie } from '$lib/server/auth';
 import { compare as comparePassword } from '$lib/utils/hash';
-import { TwoFA } from '$lib/server/2fa';
+import { TwoFA } from '$lib/constants/twoFAs';
 import prisma from '@db';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {

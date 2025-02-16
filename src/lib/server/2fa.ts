@@ -1,13 +1,7 @@
 import { totp } from 'otplib';
 import { randomBytes } from 'node:crypto';
 import base32 from 'hi-base32';
-
-const ISSUER = 'YABinPP';
-
-export enum TwoFA {
-    Delivery = 0,
-    TOTP = 1,
-}
+import { TWOFA_ISSUER } from '../constants/twoFAs';
 
 export class TOTP {
     static validate(secret: string, otp: string) {
@@ -23,6 +17,6 @@ export class TOTP {
         const opts = totp.allOptions();
         const algorithm = opts.algorithm.toUpperCase();
 
-        return `otpauth://totp/${ISSUER}:${username}?algorithm=${algorithm}&digits=${opts.digits}&period=${opts.step}&issuer=${ISSUER}&secret=${secret}`;
+        return `otpauth://totp/${TWOFA_ISSUER}:${username}?algorithm=${algorithm}&digits=${opts.digits}&period=${opts.step}&issuer=${TWOFA_ISSUER}&secret=${secret}`;
     }
 }
