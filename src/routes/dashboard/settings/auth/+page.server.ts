@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
     const twoFAs = await prisma.twoFA.findMany({
         where: { userId: userId },
-        select: { type: true },
+        select: { type: true, active: true },
     });
 
     return { twoFAs };

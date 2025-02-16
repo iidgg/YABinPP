@@ -43,7 +43,10 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         });
     }
 
-    return json({
-        success: false,
-    });
+    return json(
+        {
+            success: false,
+        },
+        { status: 401 },
+    );
 };
