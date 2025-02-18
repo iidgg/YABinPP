@@ -21,6 +21,7 @@
         "@sveltejs/kit": "^2.5.5",
         "@sveltejs/vite-plugin-svelte": "^3.0.2",
         "@tabler/icons-svelte": "^3.29.0",
+        "@types/node": "^22.13.4",
         "@types/node-cron": "^3.0.11",
         "@types/nodemailer": "^6.4.14",
         "@types/prismjs": "^1.26.3",
@@ -31,6 +32,7 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-svelte": "^2.35.1",
+        "hi-base32": "^0.5.1",
         "postcss": "^8.4.38",
         "postcss-import": "^16.1.0",
         "prettier": "3.2.5",
@@ -53,7 +55,8 @@
         "nodemailer": "^6.9.13",
         "prism-themes": "^1.9.0",
         "prismjs": "^1.29.0",
-        "sanitize-html": "^2.13.0"
+        "sanitize-html": "^2.13.0",
+        "totp-generator": "^1.0.0"
     },
     "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

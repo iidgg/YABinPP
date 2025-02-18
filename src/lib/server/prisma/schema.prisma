@@ -18,10 +18,23 @@ model User {
   name        String
   verified    Boolean     @default(false)
   settings    Json        @default("{}")
+  TwoFA       TwoFA[]
   pastes      Paste[]
   ApiToken    ApiToken[]
   AuthToken   AuthToken[]
   ResetToken  ResetToken?
+}
+
+model TwoFA {
+  id        String   @id @default(nanoid(16))
+  active    Boolean  @default(false)
+  type      Int
+  secret    String
+  uri       String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, type])
 }
 
 model ApiToken {
