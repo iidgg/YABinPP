@@ -63,7 +63,7 @@
         </p>
     {:else}
         <a
-            href="/dashboard/settings/tokens/new"
+            href="/settings/tokens/new"
             class="italic text-cyan-400 hover:underline">/ Generate new token</a
         >
     {/if}
@@ -82,7 +82,7 @@
                             class="text-blue-400 hover:underline"
                             class:text-blue-300={token.name.trim().length === 0}
                             class:italic={token.name.trim().length === 0}
-                            href={`/dashboard/settings/tokens/${token.id}`}
+                            href={`/settings/tokens/${token.id}`}
                         >
                             {token.name.trim().length === 0
                                 ? `Unnamed ${index + 1}`

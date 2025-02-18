@@ -1,9 +1,9 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
-    import { INSTANCE_NAME } from '../../lib/publicEnv';
-    import { detectMac, detectSecureConnection } from '../../lib/utils/util';
-    import UnsecureConnection from '../../lib/components/warnings/UnsecureConnection.svelte';
+    import { INSTANCE_NAME } from '$lib/publicEnv';
+    import { detectMac, detectSecureConnection } from '$lib/utils/util';
+    import UnsecureConnection from '$lib/components/warnings/UnsecureConnection.svelte';
     import Sidebar from './Sidebar.svelte';
 
     let cmdKey = 'Ctrl',

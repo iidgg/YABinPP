@@ -113,7 +113,7 @@
         });
 
         loading = false;
-        goto('/dashboard/settings/tokens');
+        goto('/settings/tokens');
     }
 
     const markAll = (scopes: TokenScopes[]) =>
@@ -159,7 +159,7 @@
     </div>
 
     <div class="w-screen flex max-w-full justify-center mt-4 gap-4">
-        <a class="text-cyan-400" href="/dashboard/settings/tokens">&lt; Back</a>
+        <a class="text-cyan-400" href="/settings/tokens">&lt; Back</a>
     </div>
 {:else}
     <div class="flex flex-col gap-4 px-4 mt-16 md:mt-4">
@@ -282,8 +282,7 @@
                 </button>
             {/if}
 
-            <a class="text-cyan-400" href="/dashboard/settings/tokens">Cancel</a
-            >
+            <a class="text-cyan-400" href="/settings/tokens">Cancel</a>
         </div>
     </div>
 {/if}

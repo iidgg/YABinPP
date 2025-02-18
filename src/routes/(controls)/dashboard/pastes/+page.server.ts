@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { getUserIdFromCookie } from '../../../lib/server/auth';
+import { getUserIdFromCookie } from '$lib/server/auth';
 import prisma from '@db';
 import { type Actions } from '@sveltejs/kit';
 

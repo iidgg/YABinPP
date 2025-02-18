@@ -39,17 +39,17 @@ export const items = [
         items: [
             {
                 name: 'Authentication',
-                href: '/dashboard/settings/auth',
+                href: '/settings/auth',
                 icon: IconShieldLock,
             },
             {
                 name: 'Sessions',
-                href: '/dashboard/settings/sessions',
+                href: '/settings/sessions',
                 icon: IconClock,
             },
             {
                 name: 'Tokens',
-                href: '/dashboard/settings/tokens',
+                href: '/settings/tokens',
                 icon: IconKey,
             },
         ],
@@ -58,7 +58,7 @@ export const items = [
         items: [
             {
                 name: 'Settings',
-                href: '/dashboard/settings',
+                href: '/settings',
                 icon: IconSettings,
             },
         ],
