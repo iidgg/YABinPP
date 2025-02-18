@@ -65,7 +65,7 @@ export const GET: RequestHandler = async ({ cookies, request, url }) => {
 
         userId = info.userId;
     } else {
-        userId = await getUserIdFromCookie(cookies);
+        userId = await getUserIdFromCookie(cookies, false);
     }
 
     // User provided auth & user owns it.
@@ -91,7 +91,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 
         userId = info.userId;
     } else {
-        userId = await getUserIdFromCookie(cookies);
+        userId = await getUserIdFromCookie(cookies, false);
     }
 
     if (env.PUBLIC_ANONYMOUS_PASTES_ENABLED === 'false' && !userId) {
@@ -181,7 +181,7 @@ export const PATCH: RequestHandler = async ({ cookies, request }) => {
 
         userId = info.userId;
     } else {
-        userId = await getUserIdFromCookie(cookies);
+        userId = await getUserIdFromCookie(cookies, false);
     }
 
     if (!key && !content) {

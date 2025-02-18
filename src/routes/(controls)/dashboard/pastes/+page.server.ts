@@ -1,4 +1,3 @@
-import { redirect } from '@sveltejs/kit';
 import { getUserIdFromCookie } from '$lib/server/auth';
 import prisma from '@db';
 import { type Actions } from '@sveltejs/kit';
@@ -7,9 +6,7 @@ import { type Actions } from '@sveltejs/kit';
 const PAGE_SIZE = 10;
 
 export async function load({ cookies }) {
-    const userId = await getUserIdFromCookie(cookies);
-    if (!userId) redirect(303, '/login');
-
+    const userId = await getUserIdFromCookie(cookies, true);
     const pastes = await prisma.paste.findMany({
         where: { ownerId: userId },
         orderBy: { createdAt: 'desc' },
@@ -28,9 +25,7 @@ export async function load({ cookies }) {
 
 export const actions: Actions = {
     fetch: async ({ cookies, request }) => {
-        const userId = await getUserIdFromCookie(cookies);
-        if (!userId) redirect(303, '/login');
-
+        const userId = await getUserIdFromCookie(cookies, true);
         const data = await request.formData();
         const _before = data.get('before')?.toString();
         const _after = data.get('after')?.toString();

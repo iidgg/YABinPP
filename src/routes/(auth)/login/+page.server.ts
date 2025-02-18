@@ -7,7 +7,7 @@ import { getUserIdFromCookie } from '$lib/server/auth';
 import { COOKIE_SECURE } from '$lib/server/env';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
     if (userId) redirect(303, '/');
 };
 export const actions: Actions = {

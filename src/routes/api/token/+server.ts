@@ -6,7 +6,7 @@ import { TOKENS_PER_USER } from '$lib/server/env';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
     const { name, scopes, expiresAt }: TokenCreate = await request.json();
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
 
     if (!userId) {
         return json(

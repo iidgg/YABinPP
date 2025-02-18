@@ -4,7 +4,7 @@ import { getUserIdFromCookie } from '$lib/server/auth';
 import { resetToken } from '$lib/server/token';
 
 export const POST: RequestHandler = async ({ cookies, params }) => {
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
 
     if (!userId || !params.id) {
         return json(

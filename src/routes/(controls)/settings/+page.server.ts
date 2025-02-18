@@ -1,16 +1,13 @@
-import { getUserIdFromCookie } from '$lib/server/auth';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { getUserFromCookie, getUserIdFromCookie } from '$lib/server/auth';
+import { type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import prisma from '@db';
 import type { UserSettings } from '$lib/types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-    const userId = await getUserIdFromCookie(cookies);
-    if (!userId) redirect(303, '/login');
-
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { settings: true },
+    const user = await getUserFromCookie(cookies, {
+        redirectIfNone: true,
+        includeUser: true,
     });
 
     return { settings: user?.settings as UserSettings };
@@ -18,9 +15,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 export const actions: Actions = {
     defaults: async ({ cookies, request }) => {
-        const userId = await getUserIdFromCookie(cookies);
-        if (!userId) redirect(303, '/login');
-
+        const userId = await getUserIdFromCookie(cookies, true);
         const formData = await request.formData();
         const expiresAfterSeconds = parseInt(
             formData.get('expires-after-seconds')?.toString() ?? '0',

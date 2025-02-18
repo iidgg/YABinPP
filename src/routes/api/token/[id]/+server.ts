@@ -10,7 +10,7 @@ import { deleteToken, setToken } from '$lib/server/token';
 /** Edit token name or permissions */
 export const POST: RequestHandler = async ({ request, cookies, params }) => {
     const { name, scopes, expiresAt }: TokenUpdate = await request.json();
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
 
     if (!userId || !params.id) {
         return json(
@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request, cookies, params }) => {
 };
 
 export const DELETE: RequestHandler = async ({ cookies, params }) => {
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
 
     if (!userId || !params.id) {
         return json(

@@ -7,7 +7,7 @@ import sanitize from 'sanitize-html';
 export async function load({ cookies, params }) {
     const { key } = params;
 
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
     const paste = await getPaste(key);
     const { title, content, language, encrypted } = paste;
 

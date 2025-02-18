@@ -2,7 +2,7 @@ import { getUserIdFromCookie } from '$lib/server/auth.js';
 import { getPaste } from '$lib/server/services.js';
 
 export async function load({ cookies, params }) {
-    const userId = await getUserIdFromCookie(cookies);
+    const userId = await getUserIdFromCookie(cookies, false);
     const paste = await getPaste(params.key);
 
     const data = {

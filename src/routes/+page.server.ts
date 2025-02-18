@@ -1,19 +1,14 @@
-import { getUserIdFromCookie } from '$lib/server/auth';
+import { getUserFromCookie } from '$lib/server/auth';
 import type { UserSettings } from '$lib/types';
-import prisma from '@db';
 
 export async function load({ cookies }) {
-    const userId = await getUserIdFromCookie(cookies);
+    const user = await getUserFromCookie(cookies, {
+        redirectIfNone: false,
+        includeUser: true,
+    });
 
-    let settings: UserSettings | undefined;
-
-    if (userId) {
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: { settings: true },
-        });
-        settings = user?.settings as UserSettings;
-    }
-
-    return { loggedIn: !!userId, settings };
+    return {
+        loggedIn: !!user,
+        settings: user ? (user.settings as UserSettings) : undefined,
+    };
 }

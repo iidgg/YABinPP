@@ -1,7 +1,7 @@
 import { compare as compareSecret, hash as hashSecret } from '$lib/utils/hash';
 import prisma from '@db';
 import type { User } from '@prisma/client';
-import type { Cookies } from '@sveltejs/kit';
+import { redirect, type Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 
 export const userExists = async (userId: string) =>
@@ -12,21 +12,43 @@ export const userExists = async (userId: string) =>
         })
         .then((d) => d?.id ?? null);
 
-export const getUserIdFromCookie = async (cookies: Cookies) => {
+interface getUserOptions<R, I> {
+    redirectIfNone?: R;
+    includeUser?: I;
+}
+
+export async function getUserIdFromCookie<
+    R extends boolean = false,
+    T = User['id'] | (R extends true ? never : null),
+>(cookies: Cookies, redirectIfNone: R): Promise<T> {
+    return getUserFromCookie(cookies, { redirectIfNone });
+}
+
+export async function getUserFromCookie<
+    R extends boolean = false,
+    I extends boolean = false,
+    T = (I extends true ? User : User['id']) | (R extends true ? never : null),
+>(cookies: Cookies, opts?: getUserOptions<R, I>): Promise<T> {
     const token = cookies.get('token');
-    if (!token) return null;
 
-    const authToken = await prisma.authToken.findFirst({
-        where: { token, expiresAt: { gt: new Date() } },
-        include: { user: { select: { id: true, verified: true } } },
-    });
+    if (token && token.length > 0 && token.length <= 64) {
+        const query = await prisma.authToken.findUnique({
+            where: { token, expiresAt: { gt: new Date() } },
+            include: {
+                user: opts?.includeUser ? true : { select: { verified: true } },
+            },
+        });
 
-    if (!authToken?.user.verified) {
-        return null;
+        if (query?.user.verified)
+            return (query.user.username ? query.user : query.user.id) as T;
     }
 
-    return authToken.user.id;
-};
+    if (opts?.redirectIfNone) {
+        return redirect(303, '/login');
+    }
+
+    return null as T;
+}
 
 export const generateVerificationHash = async (userId: string) => {
     const user = await prisma.user.findUnique({ where: { id: userId } });

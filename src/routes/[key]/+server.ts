@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ cookies, url, params }) => {
     }
 
     if (paste.hidden) {
-        const userId = await getUserIdFromCookie(cookies);
+        const userId = await getUserIdFromCookie(cookies, false);
         if (paste.ownerId !== userId)
             return text('Unauthorized', { status: 401 });
     }
