@@ -4,14 +4,16 @@ import prisma from '@db';
 import { compare as comparePassword } from '$lib/utils/hash';
 import { nanoid } from 'nanoid';
 import { getUserIdFromCookie } from '$lib/server/auth';
-import { COOKIE_SECURE } from '$lib/server/env';
+import { TwoFA, TwoFANames } from '$lib/constants/twoFAs';
+import { TOTP } from '$lib/server/2fa';
+import { createSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = async ({ cookies }) => {
     const userId = await getUserIdFromCookie(cookies, false);
     if (userId) redirect(303, '/');
 };
 export const actions: Actions = {
-    default: async ({ cookies, request }) => {
+    login: async ({ cookies, request }) => {
         const data = await request.formData();
 
         const usernameOrEmail = data.get('username-email');
@@ -27,12 +29,8 @@ export const actions: Actions = {
         const user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    {
-                        username: usernameOrEmail.toString(),
-                    },
-                    {
-                        email: usernameOrEmail.toString(),
-                    },
+                    { username: usernameOrEmail.toString() },
+                    { email: usernameOrEmail.toString() },
                 ],
             },
         });
@@ -51,27 +49,74 @@ export const actions: Actions = {
             });
         }
 
-        await prisma.session.deleteMany({
+        prisma.session.deleteMany({
             where: { expiresAt: { lte: new Date() } },
         });
 
-        const authToken = await prisma.session.create({
-            data: {
-                user: { connect: { id: user.id } },
-                createdAt: new Date(),
-                expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
-                token: nanoid(32),
+        const mfa = await prisma.mfa.findUnique({
+            select: { id: true, type: true },
+            where: {
+                userId_type: { userId: user.id, type: TwoFA.TOTP },
             },
         });
 
-        cookies.set('token', authToken.token, {
-            path: '/',
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-            secure: COOKIE_SECURE,
-            httpOnly: true,
-            sameSite: 'strict',
-        });
+        if (mfa) {
+            const ticket = await prisma.mfaTicket.create({
+                data: {
+                    mfa: { connect: { id: mfa.id } },
+                    createdAt: new Date(),
+                    expiresAt: new Date(Date.now() + 1000 * 60 * 2), // 2 minutes
+                    token: nanoid(64),
+                    type: mfa.type,
+                },
+            });
+
+            return {
+                success: true,
+                mfa: {
+                    type: ticket.type,
+                    ticket: ticket.token,
+                },
+            };
+        }
+
+        await createSession(cookies, user.id);
 
         redirect(303, '/');
+    },
+
+    mfa: async ({ cookies, request }) => {
+        const data = await request.formData();
+
+        const type = Number(data.get('type')?.toString());
+        const token = data.get('ticket')?.toString();
+        const code = data.get('code')?.toString();
+
+        if (isNaN(type) || !token || !code || !(type in TwoFANames))
+            return fail(400, { success: false, errors: ['Invalid data'] });
+
+        const ticket = await prisma.mfaTicket.findUnique({
+            select: { mfa: { select: { userId: true, secret: true } } },
+            where: {
+                type,
+                token,
+            },
+        });
+
+        if (!ticket)
+            return fail(400, { success: false, errors: ['Invalid data'] });
+        const { secret, userId } = ticket.mfa;
+
+        const valid = TOTP.validate(secret, code);
+
+        if (valid) {
+            await createSession(cookies, userId);
+            return redirect(303, '/');
+        }
+
+        return fail(401, {
+            success: false,
+            errors: ['Invalid Multi-factor code'],
+        });
     },
 };

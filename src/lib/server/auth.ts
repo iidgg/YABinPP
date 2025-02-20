@@ -3,6 +3,7 @@ import prisma from '@db';
 import type { User } from '@prisma/client';
 import { redirect, type Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
+import { COOKIE_SECURE } from './env';
 
 export const userExists = async (userId: string) =>
     await prisma.user
@@ -106,3 +107,24 @@ export const generatePasswordResetToken = async (userId: string) => {
 
 const verificationSecret = (user: User) =>
     `${user.email}${user.id}${user.password}${user.verified}`;
+
+export async function createSession(cookies: Cookies, userId: string) {
+    const session = await prisma.session.create({
+        data: {
+            user: { connect: { id: userId } },
+            createdAt: new Date(),
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
+            token: nanoid(32),
+        },
+    });
+
+    cookies.set('token', session.token, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        secure: COOKIE_SECURE,
+        httpOnly: true,
+        sameSite: 'strict',
+    });
+
+    return session;
+}

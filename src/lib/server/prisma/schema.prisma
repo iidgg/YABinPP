@@ -33,8 +33,19 @@ model mfa {
   uri       String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokens    mfaTicket[]
   
   @@unique([userId, type])
+}
+
+model mfaTicket {
+  id        String   @id @default(nanoid(16))
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  token     String   @unique
+  type      Int
+  mfaId     String
+  mfa       mfa     @relation(fields: [mfaId], references: [id], onDelete: Cascade)
 }
 
 model ApiToken {

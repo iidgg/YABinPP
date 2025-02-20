@@ -1,9 +1,14 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import { env } from '$env/dynamic/public';
+    import Modal from '$lib/components/modal.svelte';
     import type { ActionData } from './$types';
 
     export let form: ActionData;
+
+    let modal: Modal;
+
+    $: if (form?.success && form.mfa?.ticket) modal.open();
 </script>
 
 <div class="flex flex-col justify-center items-center">
@@ -22,7 +27,12 @@
             </div>
         {/if}
 
-        <form method="post" class="mt-2 flex flex-col gap-4" use:enhance>
+        <form
+            action="?/login"
+            method="post"
+            class="mt-2 flex flex-col gap-4"
+            use:enhance
+        >
             <div>
                 <label for="username" class="px-2 py-2"
                     >Username or E-mail</label
@@ -68,3 +78,34 @@
         </form>
     </div>
 </div>
+
+<Modal bind:this={modal} escapable={false}>
+    <form
+        id="mfa-form"
+        action="?/mfa"
+        method="post"
+        slot="content"
+        class="w-full mt-2 flex flex-col items-center gap-4"
+        use:enhance={(input) => {
+            if (form?.mfa) {
+                input.formData.set('type', String(form.mfa.type));
+                input.formData.set('ticket', String(form.mfa.ticket));
+            }
+        }}
+    >
+        <h4>Mutli factor authentication</h4>
+        <input
+            class="w-2/4 text-lg bg-gray-800 py-1 px-2"
+            type="text"
+            name="code"
+            placeholder="code"
+        />
+    </form>
+    <div slot="buttons">
+        <button
+            form="mfa-form"
+            class="bg-green-500 text-black text-lg px-3 py-1 disabled:animate-pulse"
+            >Submit</button
+        >
+    </div>
+</Modal>
