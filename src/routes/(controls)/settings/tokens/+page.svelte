@@ -21,10 +21,11 @@
     }
 
     async function handleReset(id: string) {
-        // if there is a token, copy it
-        if (state[id].token) {
+        const token = state[id].token;
+
+        if (token) {
             try {
-                await navigator.clipboard.writeText(state[id].token);
+                await navigator.clipboard.writeText(token);
                 state[id].copied = true;
                 setTimeout(() => (state[id].copied = false), 1500);
             } catch (err) {
