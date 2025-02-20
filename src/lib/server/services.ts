@@ -39,7 +39,7 @@ export async function getPaste(key: string) {
     };
 }
 
-export async function deleteExpiredPastes() {
+export async function deleteExpired() {
     await prisma.paste.deleteMany({
         where: {
             expiresAt: {
@@ -47,10 +47,32 @@ export async function deleteExpiredPastes() {
             },
         },
     });
-}
 
-export async function deleteExpiredTokens() {
     await prisma.apiToken.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date(),
+            },
+        },
+    });
+
+    await prisma.mfaTicket.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date(),
+            },
+        },
+    });
+
+    await prisma.resetToken.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date(),
+            },
+        },
+    });
+
+    await prisma.session.deleteMany({
         where: {
             expiresAt: {
                 lt: new Date(),
