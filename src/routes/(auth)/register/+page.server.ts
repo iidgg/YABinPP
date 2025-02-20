@@ -109,7 +109,7 @@ export const actions: Actions = {
                 data: { verified: true },
             });
 
-            const authToken = await prisma.authToken.create({
+            const authToken = await prisma.session.create({
                 data: {
                     user: {
                         connect: {

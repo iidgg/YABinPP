@@ -21,7 +21,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 
     const secret = TOTP.generateSecret();
     const uri = TOTP.secretURI(user.username, secret);
-    const twoFA = await prisma.twoFA.update({
+    const twoFA = await prisma.mfa.update({
         where: { userId_type: { userId: user.id, type: TwoFA.TOTP } },
         data: { secret, uri, active: false },
     });

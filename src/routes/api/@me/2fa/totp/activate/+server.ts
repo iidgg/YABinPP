@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         );
     }
 
-    const twoFA = await prisma.twoFA.findUnique({
+    const twoFA = await prisma.mfa.findUnique({
         where: { userId_type: { userId: user.id, type: TwoFA.TOTP } },
     });
 
@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     }
 
     if (TOTP.validate(twoFA.secret, otp)) {
-        await prisma.twoFA.update({
+        await prisma.mfa.update({
             where: { userId_type: { userId: user.id, type: TwoFA.TOTP } },
             data: { active: true },
         });

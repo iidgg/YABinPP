@@ -51,11 +51,11 @@ export const actions: Actions = {
             });
         }
 
-        await prisma.authToken.deleteMany({
+        await prisma.session.deleteMany({
             where: { expiresAt: { lte: new Date() } },
         });
 
-        const authToken = await prisma.authToken.create({
+        const authToken = await prisma.session.create({
             data: {
                 user: { connect: { id: user.id } },
                 createdAt: new Date(),

@@ -32,7 +32,7 @@ export async function getUserFromCookie<
     const token = cookies.get('token');
 
     if (token && token.length > 0 && token.length <= 64) {
-        const query = await prisma.authToken.findUnique({
+        const query = await prisma.session.findUnique({
             where: { token, expiresAt: { gt: new Date() } },
             include: {
                 user: opts?.includeUser ? true : { select: { verified: true } },

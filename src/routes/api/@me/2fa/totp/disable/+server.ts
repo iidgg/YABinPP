@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
         );
     }
 
-    await prisma.twoFA.delete({
+    await prisma.mfa.delete({
         where: { userId_type: { userId: user.id, type: TwoFA.TOTP } },
     });
 
