@@ -14,9 +14,10 @@
             {/if}
 
             {#each itemList.items as item, i (i)}
+                {@const route = $page.route.id?.replace('/(controls)', '')}
                 <li
                     class="item hover:!bg-gray-800"
-                    class:active={$page.route.id === item.href}
+                    class:active={route === item.href}
                 >
                     <a class="flex items-center" href={item.href}>
                         <svelte:component
