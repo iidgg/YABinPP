@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import prisma from '@db';
-import { compare as comparePassword } from '$lib/utils/hash';
+import { Password } from '$lib/server/hash';
 import { nanoid } from 'nanoid';
 import { getUserIdFromCookie } from '$lib/server/auth';
 import { TwoFA, TwoFANames } from '$lib/constants/twoFAs';
@@ -35,7 +35,7 @@ export const actions: Actions = {
             },
         });
 
-        if (!user || !comparePassword(user.password, password.toString())) {
+        if (!user || !Password.compare(user.password, password.toString())) {
             return fail(400, {
                 success: false,
                 errors: ['Invalid username or password'],

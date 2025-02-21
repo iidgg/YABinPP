@@ -2,10 +2,7 @@ import { redirect, error } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import prisma from '@db';
-import {
-    hash as hashPassword,
-    compare as comparePassword,
-} from '$lib/utils/hash';
+import { Password } from '$lib/server/hash';
 import { validatePassword } from '$lib/server/validate';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -58,7 +55,7 @@ export const actions: Actions = {
         }
 
         if (newPassword) {
-            if (comparePassword(user.password, newPassword.toString())) {
+            if (Password.compare(user.password, newPassword.toString())) {
                 errors.push('Cannot use existing password');
             }
         }
@@ -68,7 +65,9 @@ export const actions: Actions = {
         }
 
         if (newPassword && cnfPassword) {
-            const newPasswordHash = hashPassword(newPassword.toString()).join();
+            const newPasswordHash = Password.hash(
+                newPassword.toString(),
+            ).join();
             await prisma.user.update({
                 where: { id: userId },
                 data: { password: newPasswordHash },

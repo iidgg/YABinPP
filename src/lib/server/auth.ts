@@ -1,9 +1,9 @@
-import { compare as compareSecret, hash as hashSecret } from '$lib/utils/hash';
 import prisma from '@db';
 import type { User } from '@prisma/client';
 import { redirect, type Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
 import { COOKIE_SECURE } from './env';
+import { Password, Verification } from './hash';
 
 export const userExists = async (userId: string) =>
     await prisma.user
@@ -16,6 +16,7 @@ export const userExists = async (userId: string) =>
 interface getUserOptions<R, I> {
     redirectIfNone?: R;
     includeUser?: I;
+    password?: string;
 }
 
 export async function getUserIdFromCookie<
@@ -32,18 +33,31 @@ export async function getUserFromCookie<
 >(cookies: Cookies, opts?: getUserOptions<R, I>): Promise<T> {
     const token = cookies.get('token');
 
-    if (token && token.length > 0 && token.length <= 64) {
+    notfound: if (token && token.length > 0 && token.length <= 64) {
+        const pass = typeof opts?.password === 'string';
         const query = await prisma.session.findUnique({
             where: { token, expiresAt: { gt: new Date() } },
-            include: {
-                user: opts?.includeUser
-                    ? true
-                    : { select: { id: true, verified: true } },
-            },
+            include: opts?.includeUser
+                ? { user: true }
+                : {
+                      user: {
+                          select: {
+                              id: true,
+                              verified: true,
+                              password: pass,
+                          },
+                      },
+                  },
         });
 
-        if (query?.user.verified)
-            return (query.user.username ? query.user : query.user.id) as T;
+        if (!query) break notfound;
+        const { user: u } = query;
+
+        const validPass = !pass || Password.compare(u.password, opts.password!);
+
+        if (u.verified && validPass) {
+            return (u.username ? u : u.id) as T;
+        }
     }
 
     if (opts?.redirectIfNone) {
@@ -57,7 +71,7 @@ export const generateVerificationHash = async (userId: string) => {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error('User not found');
 
-    return hashSecret(verificationSecret(user)).join();
+    return Verification.hash(verificationSecret(user)).join();
 };
 
 export const validateVerificationHash = async (
@@ -67,7 +81,7 @@ export const validateVerificationHash = async (
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return false;
 
-    const matches = compareSecret(hash, verificationSecret(user));
+    const matches = Verification.compare(hash, verificationSecret(user));
 
     if (matches) {
         await prisma.user.update({

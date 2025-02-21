@@ -1,6 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { getUserFromCookie } from '$lib/server/auth';
-import { compare as comparePassword } from '$lib/utils/hash';
 import { TwoFA } from '$lib/constants/twoFAs';
 import { TOTP } from '$lib/server/2fa';
 import prisma from '@db';
@@ -10,9 +9,10 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const user = await getUserFromCookie(cookies, {
         redirectIfNone: false,
         includeUser: true,
+        password,
     });
 
-    if (!user || !comparePassword(user.password, password.toString())) {
+    if (!user) {
         return json(
             { success: false, error: 'Unauthorized access' },
             { status: 401 },
