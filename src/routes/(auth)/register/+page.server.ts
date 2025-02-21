@@ -2,7 +2,7 @@ import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import prisma from '@db';
 import { Password } from '$lib/server/hash';
-import { nanoid } from 'nanoid';
+import { createSession } from '$lib/server/auth';
 import { env } from '$env/dynamic/private';
 import { env as envPublic } from '$env/dynamic/public';
 import { sendVerificationEmail } from '$lib/server/email/verify';
@@ -12,7 +12,6 @@ import {
     validateName,
     validateUsername,
 } from '$lib/server/validate';
-import { COOKIE_SECURE } from '$lib/server/env';
 
 export const actions: Actions = {
     default: async ({ cookies, request }) => {
@@ -109,26 +108,7 @@ export const actions: Actions = {
                 data: { verified: true },
             });
 
-            const authToken = await prisma.session.create({
-                data: {
-                    user: {
-                        connect: {
-                            id: user.id,
-                        },
-                    },
-                    createdAt: new Date(),
-                    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
-                    token: nanoid(32),
-                },
-            });
-
-            cookies.set('token', authToken.token, {
-                path: '/',
-                maxAge: 60 * 60 * 24 * 30, // 30 days
-                secure: COOKIE_SECURE,
-                httpOnly: true,
-                sameSite: 'strict',
-            });
+            await createSession(cookies, user.id);
 
             redirect(303, '/');
         }
