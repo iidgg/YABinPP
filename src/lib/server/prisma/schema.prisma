@@ -33,12 +33,12 @@ model mfa {
   uri       String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokens    mfaTicket[]
+  tickets    AuthTicket[]
   
   @@unique([userId, type])
 }
 
-model mfaTicket {
+model AuthTicket {
   id        String   @id @default(nanoid(16))
   createdAt DateTime @default(now())
   expiresAt DateTime

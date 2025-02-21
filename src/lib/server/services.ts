@@ -56,7 +56,7 @@ export async function deleteExpired() {
         },
     });
 
-    await prisma.mfaTicket.deleteMany({
+    await prisma.authTicket.deleteMany({
         where: {
             expiresAt: {
                 lt: new Date(),

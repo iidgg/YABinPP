@@ -61,7 +61,7 @@ export const actions: Actions = {
         });
 
         if (mfa) {
-            const ticket = await prisma.mfaTicket.create({
+            const ticket = await prisma.authTicket.create({
                 data: {
                     mfa: { connect: { id: mfa.id } },
                     createdAt: new Date(),
@@ -95,7 +95,7 @@ export const actions: Actions = {
         if (isNaN(type) || !token || !code || !(type in TwoFANames))
             return fail(400, { success: false, errors: ['Invalid data'] });
 
-        const ticket = await prisma.mfaTicket.findUnique({
+        const ticket = await prisma.authTicket.findUnique({
             select: { mfa: { select: { userId: true, secret: true } } },
             where: {
                 type,
