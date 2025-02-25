@@ -15,6 +15,9 @@ export const TOKENS_LENGTH = num(32, env.TOKENS_LENGTH); // byte length
 
 export const COOKIE_SECURE = str('no', env.COOKIE_SECURE) === 'true';
 
+/** Optionally, disable/enable saving session LastActive.. etc; Default: enabled. */
+export const SESSION_INFO = str('true', env.SESSION_INFO) === 'true';
+
 // IP Hashing options, useful for advanced users
 export const IP_ITERATION = num(100_000, env.IP_ITERATION);
 export const IP_KEYLEN = num(32, env.IP_KEYLEN);

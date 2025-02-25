@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     if (userId) redirect(303, '/');
 };
 export const actions: Actions = {
-    login: async ({ cookies, request }) => {
+    login: async ({ cookies, request, getClientAddress }) => {
         const data = await request.formData();
 
         const usernameOrEmail = data.get('username-email');
@@ -80,12 +80,12 @@ export const actions: Actions = {
             };
         }
 
-        await createSession(cookies, user.id);
+        await createSession(cookies, user.id, { ip: getClientAddress() });
 
         redirect(303, '/');
     },
 
-    mfa: async ({ cookies, request }) => {
+    mfa: async ({ cookies, request, getClientAddress }) => {
         const data = await request.formData();
 
         const type = Number(data.get('type')?.toString());
@@ -110,7 +110,7 @@ export const actions: Actions = {
         const valid = TOTP.validate(secret, code);
 
         if (valid) {
-            await createSession(cookies, userId);
+            await createSession(cookies, userId, { ip: getClientAddress() });
             return redirect(303, '/');
         }
 

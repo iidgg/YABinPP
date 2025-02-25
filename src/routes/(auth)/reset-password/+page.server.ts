@@ -73,6 +73,7 @@ export const actions: Actions = {
                 data: { password: newPasswordHash },
             });
             await prisma.resetToken.delete({ where: { userId: userId } });
+            await prisma.session.deleteMany({ where: { userId: userId } });
             redirect(303, '/login');
         }
 

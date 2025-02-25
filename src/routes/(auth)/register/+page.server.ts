@@ -14,7 +14,7 @@ import {
 } from '$lib/server/validate';
 
 export const actions: Actions = {
-    default: async ({ cookies, request }) => {
+    default: async ({ cookies, request, getClientAddress }) => {
         if (envPublic.PUBLIC_REGISTRATION_ENABLED !== 'true') {
             return fail(404, { success: false, errors: ['Not found'] });
         }
@@ -108,7 +108,7 @@ export const actions: Actions = {
                 data: { verified: true },
             });
 
-            await createSession(cookies, user.id);
+            await createSession(cookies, user.id, { ip: getClientAddress() });
 
             redirect(303, '/');
         }

@@ -1,9 +1,9 @@
 import prisma from '@db';
-import type { User } from '@prisma/client';
+import type { Prisma, Session, User } from '@prisma/client';
 import { redirect, type Cookies } from '@sveltejs/kit';
 import { nanoid } from 'nanoid';
-import { COOKIE_SECURE } from './env';
-import { Password, Verification } from './hash';
+import { COOKIE_SECURE, SESSION_INFO } from './env';
+import { IP, Password, Verification } from './hash';
 
 export const userExists = async (userId: string) =>
     await prisma.user
@@ -13,28 +13,45 @@ export const userExists = async (userId: string) =>
         })
         .then((d) => d?.id ?? null);
 
-interface getUserOptions<R, I> {
+export async function getUserIdFromCookie<
+    R extends boolean = false,
+    T = User['id'] | (R extends true ? never : null),
+>(cookies: Cookies, redirectIfNone: R): Promise<T> {
+    return (await getSession(cookies, { redirectIfNone }))?.userId as T;
+}
+
+type getUserOptions<R> = Omit<getSessionOptions<R, true>, 'includeUser'>;
+
+export async function getUserFromCookie<
+    R extends boolean = false,
+    T = User | (R extends true ? never : null),
+>(cookies: Cookies, opts?: getUserOptions<R>): Promise<T> {
+    return (
+        await getSession(cookies, {
+            includeUser: true,
+            redirectIfNone: opts?.redirectIfNone,
+            password: opts?.password,
+        })
+    )?.user as T;
+}
+
+interface getSessionOptions<R, I> {
     redirectIfNone?: R;
     includeUser?: I;
     password?: string;
 }
 
-export async function getUserIdFromCookie<
-    R extends boolean = false,
-    T = User['id'] | (R extends true ? never : null),
->(cookies: Cookies, redirectIfNone: R): Promise<T> {
-    return getUserFromCookie(cookies, { redirectIfNone });
-}
-
-export async function getUserFromCookie<
+export async function getSession<
     R extends boolean = false,
     I extends boolean = false,
-    T = (I extends true ? User : User['id']) | (R extends true ? never : null),
->(cookies: Cookies, opts?: getUserOptions<R, I>): Promise<T> {
+    T =
+        | (I extends true ? Session & { user: User } : Session)
+        | (R extends true ? never : null),
+>(cookies: Cookies, opts?: getSessionOptions<R, I>): Promise<T> {
     const token = cookies.get('token');
 
     notfound: if (token && token.length > 0 && token.length <= 64) {
-        const pass = typeof opts?.password === 'string';
+        const pswd = typeof opts?.password === 'string';
         const query = await prisma.session.findUnique({
             where: { token, expiresAt: { gt: new Date() } },
             include: opts?.includeUser
@@ -44,19 +61,21 @@ export async function getUserFromCookie<
                           select: {
                               id: true,
                               verified: true,
-                              password: pass,
+                              password: pswd,
                           },
                       },
                   },
         });
 
-        if (!query) break notfound;
-        const { user: u } = query;
+        if (!query || !query.user.verified) break notfound;
 
-        const validPass = !pass || Password.compare(u.password, opts.password!);
+        prisma.session.update({
+            where: { id: query.id },
+            data: { lastActive: new Date() },
+        });
 
-        if (u.verified && validPass) {
-            return (u.username ? u : u.id) as T;
+        if (!pswd || Password.compare(query.user.password, opts.password!)) {
+            return query as T;
         }
     }
 
@@ -124,15 +143,28 @@ export const generatePasswordResetToken = async (userId: string) => {
 const verificationSecret = (user: User) =>
     `${user.email}${user.id}${user.password}${user.verified}`;
 
-export async function createSession(cookies: Cookies, userId: string) {
-    const session = await prisma.session.create({
-        data: {
-            user: { connect: { id: userId } },
-            createdAt: new Date(),
-            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
-            token: nanoid(32),
-        },
-    });
+interface SessionInfo {
+    ip: string;
+}
+
+export async function createSession(
+    cookies: Cookies,
+    userId: string,
+    info?: SessionInfo,
+) {
+    const data: Prisma.SessionCreateInput = {
+        user: { connect: { id: userId } },
+        token: nanoid(32),
+        createdAt: new Date(),
+        lastActive: new Date(),
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
+    };
+
+    if (SESSION_INFO && info) {
+        data.ip = IP.hash(info.ip).join();
+    }
+
+    const session = await prisma.session.create({ data });
 
     cookies.set('token', session.token, {
         path: '/',

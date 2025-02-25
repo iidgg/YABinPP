@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Session" ADD COLUMN     "ip" TEXT,
+ADD COLUMN     "lastActive" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP;
