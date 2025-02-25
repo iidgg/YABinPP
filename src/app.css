@@ -1,12 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/preflight';
+@import 'tailwindcss/utilities';
+@import 'tailwindcss';
 
 :root {
     --color-primary: #e5e1d1;
     --color-background: #101419;
     --color-background-muted: #171d24;
     --color-dark: rgba(0, 0, 0, 0.7);
+}
+
+@theme {
+    --color-primary: var(--color-primary);
+    --color-background: var(--color-background);
+    --color-background-muted: var(--color-background-muted);
+    --color-dark: var(--color-dark);
+    --font-sans: 'Fira Mono', var(--font-mono);
 }
 
 body {
