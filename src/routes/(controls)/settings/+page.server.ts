@@ -5,10 +5,7 @@ import prisma from '@db';
 import type { UserSettings } from '$lib/types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-    const user = await getUserFromCookie(cookies, {
-        redirectIfNone: true,
-        includeUser: true,
-    });
+    const user = await getUserFromCookie(cookies, { redirectIfNone: true });
 
     return { settings: user?.settings as UserSettings };
 };

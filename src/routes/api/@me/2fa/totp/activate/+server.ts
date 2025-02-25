@@ -6,10 +6,7 @@ import prisma from '@db';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
     const { otp } = await request.json();
-    const user = await getUserFromCookie(cookies, {
-        redirectIfNone: false,
-        includeUser: true,
-    });
+    const user = await getUserFromCookie(cookies, { redirectIfNone: false });
 
     if (!user) {
         return json(

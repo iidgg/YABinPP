@@ -4,10 +4,7 @@ import type { Actions } from '@sveltejs/kit';
 import { IP } from '$lib/server/hash.js';
 
 export async function load({ cookies }) {
-    const currentSession = await getSession(cookies, {
-        redirectIfNone: true,
-        includeUser: true,
-    });
+    const currentSession = await getSession(cookies, { redirectIfNone: true });
 
     const sessions = await prisma.session.findMany({
         where: { userId: currentSession.userId },

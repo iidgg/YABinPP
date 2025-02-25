@@ -8,7 +8,6 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const { password } = await request.json();
     const user = await getUserFromCookie(cookies, {
         redirectIfNone: false,
-        includeUser: true,
         password,
     });
 
