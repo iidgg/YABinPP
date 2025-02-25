@@ -15,9 +15,7 @@
         "migrate:dev": "prisma migrate dev --schema=./src/lib/server/prisma/schema.prisma"
     },
     "devDependencies": {
-        "@sveltejs/adapter-auto": "^4.0.0",
         "@sveltejs/adapter-node": "^5.2.12",
-        "@sveltejs/adapter-vercel": "^5.6.3",
         "@sveltejs/kit": "^2.17.2",
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
         "@tabler/icons-svelte": "^3.30.0",
