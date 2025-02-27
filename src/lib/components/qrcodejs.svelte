@@ -42,5 +42,5 @@
 </script>
 
 {#key value}
-    <div bind:this={parent} id="qrcode" />
+    <div bind:this={parent} id="qrcode"></div>
 {/key}

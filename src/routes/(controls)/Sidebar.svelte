@@ -32,7 +32,7 @@
         </ul>
 
         {#if ii !== items.length - 1}
-            <div class="divider" />
+            <div class="divider"></div>
         {/if}
     {/each}
 </div>

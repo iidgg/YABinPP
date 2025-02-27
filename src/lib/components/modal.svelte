@@ -21,7 +21,7 @@
     <div
         class="fixed inset-0 bg-gray-800 bg-opacity-75 transition-opacity"
         on:click={() => (escapable ? close() : null)}
-    />
+    ></div>
 
     <div class="fixed z-10 inset-0 overflow-y-auto pointer-events-none">
         <div

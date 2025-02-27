@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
     export let open = false;
+    export let label: string;
 </script>
 
 <button
+    aria-label={label}
     class="text-white cursor-pointer border-none focus:outline-none"
     class:open
     on:click={() => (open = !open)}

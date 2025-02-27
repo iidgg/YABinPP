@@ -188,7 +188,7 @@
         >Save</button
     >
 
-    <Hamburger bind:open={sidebarOpen} />
+    <Hamburger bind:open={sidebarOpen} label="toggle sidebar" />
 </div>
 
 <div class="h-screen grid grid-cols-12 text-primary">
@@ -211,7 +211,7 @@
             bind:this={inputRef}
             disabled={env.PUBLIC_ANONYMOUS_PASTES_ENABLED === 'false' &&
                 !data.loggedIn}
-        />
+        ></textarea>
         <div
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-lg -z-10 opacity-40 hidden"
             class:hidden={content}

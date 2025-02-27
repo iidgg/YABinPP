@@ -199,6 +199,6 @@
             class="px-2 grow border-none outline-none bg-transparent resize-none"
             spellcheck="false"
             bind:value={content}
-        />
+        ></textarea>
     {/if}
 </div>
