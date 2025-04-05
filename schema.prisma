@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "server/generated_prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String      @id @default(nanoid(16))
+  username    String      @unique
+  email       String      @unique
+  password    String
+  name        String
+  verified    Boolean     @default(false)
+  settings    Json        @default("{}")
+  pastes      Paste[]
+  Sessions    Session[]
+  mfa         mfa[]
+  ApiToken    ApiToken[]
+  ResetToken  ResetToken?
+}
+
+model mfa {
+  id        String   @id @default(nanoid(16))
+  active    Boolean  @default(false)
+  type      Int
+  secret    String
+  uri       String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tickets    AuthTicket[]
+  
+  @@unique([userId, type])
+}
+
+model AuthTicket {
+  id        String   @id @default(nanoid(16))
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  token     String   @unique
+  type      Int
+  mfaId     String
+  mfa       mfa     @relation(fields: [mfaId], references: [id], onDelete: Cascade)
+}
+
+model ApiToken {
+  id          String     @id @default(nanoid(16))
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime?
+  name        String
+  token       String     @unique
+  scopes      String     @db.Bit(3)
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id          String     @id @default(nanoid(16))
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime
+  lastActive  DateTime?  @default(now())
+  ip          String?
+  token       String     @unique
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ResetToken {
+  id        String   @id @default(nanoid(16))
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  token     String   @unique
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Paste {
+  id                BigInt    @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+  key               String    @unique @db.VarChar(20)
+  title             String?
+  content           String
+  hidden            Boolean   @default(false)
+  encrypted         Boolean   @default(false)
+  passwordProtected Boolean   @default(false)
+  initVector        String?   @unique @db.VarChar(64)
+  language          String    @default("plaintext") @db.VarChar(64)
+  expiresAt         DateTime?
+  expiresCount      Int?
+  readCount         Int       @default(0)
+  ownerId           String?
+  owner             User?     @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([key])
+}
